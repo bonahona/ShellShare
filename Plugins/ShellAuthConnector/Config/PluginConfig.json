@@ -3,12 +3,12 @@
     {
     },
     "ShellApplication": {
-        "Name": "ShellAuth",
+        "Name": "share",
         "PublicKey": "-"
     },
     "ShellAuthServer": {
-        "Server": "shellauth.local",
-        "Port" : "81",
+        "Server": "auth.fyrvall.com",
+        "Port" : "80",
         "MethodPaths": {
             "CreateApplication": "/application/create",
             "EditApplication": "/application/edit",

@@ -7,4 +7,14 @@ class HomeController extends Controller
         $this->Title = "Index";
         $this->View();
     }
+
+    public function NotFound()
+    {
+        return $this->View();
+    }
+
+    public function Search()
+    {
+
+    }
 }
