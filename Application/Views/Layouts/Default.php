@@ -14,6 +14,7 @@
     <?php echo $this->Html->Css('bootstrap.min.css');?>
     <?php echo $this->Html->Css('dashboard.css');?>
     <?php echo $this->Html->Css('sh_style.css');?>
+    <?php echo $this->Html->Css('bootstrap-treeview.css');?>
 
 </head>
 
@@ -57,11 +58,11 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-            <?php if(isset($Sidebar)):?>
-                <?php echo $this->PartialView('Sidebar', array('Sidebar' => $Sidebar));?>
+            <?php if(isset($RootDirectories)):?>
+                <?php echo $this->PartialView('Sidebar', array('RootDirectories' => $RootDirectories));?>
             <?php endif;?>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div id="file-container" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <?php if(isset($BreadCrumbs)):?>
                 <?php echo $this->PartialView('Breadcrumbs', array('BreadCrumbs' => $BreadCrumbs));?>
             <?php endif;?>
@@ -80,5 +81,6 @@
 <?php echo $this->Html->Js('sh_cpp.min.js');?>
 <?php echo $this->Html->Js('sh_csharp.min.js');?>
 <?php echo $this->Html->Js('sh_php.min.js');?>
+<?php echo $this->Html->Js('bootstrap-treeview.js');?>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
-class VirtualDirectoryController extends Controller
+require_once('BaseController.php');
+class VirtualDirectoryController extends BaseController
 {
     public function Create($parentDirectoryId = null)
     {
@@ -16,12 +17,11 @@ class VirtualDirectoryController extends Controller
 
         if($this->IsPost() && !$this->Data->IsEmpty()){
             $virtualDirectory = $this->Data->Parse('VirtualDirectory', $this->Models->VirtualDirectory);
+            $virtualDirectory->ConvertZeroToNull();
 
             $virtualDirectory->AccessRightsMask = $this->ConvertRightsToMask(array());
-            var_dump($virtualDirectory->Object());
             $virtualDirectory->Save();
-            die();
-            return $this->Redirect('/VirtualDirectories/Details/' . $virtualDirectory->Id);
+            return $this->Redirect($virtualDirectory->GetLinkPath());
         }else{
             $currentUser = $this->GetCurrentUser();
 
@@ -30,7 +30,15 @@ class VirtualDirectoryController extends Controller
             }else {
                 $virtualDirectory = $this->Models->VirtualDirectory->Create(array('DirectoryId' => $parentDirectory->Id, 'OwnerId' => $currentUser['Id']));
             }
-            $virtualDirectories = $this->Models->VirtualDirectory->All();
+            $dbVirtualDirectories = $this->Models->VirtualDirectory->All();
+
+            $virtualDirectories = array();
+
+            $virtualDirectories[0] = $this->Html->SafeHtml('<root>');
+            foreach($dbVirtualDirectories as $virtualDirectory){
+                $virtualDirectories[$virtualDirectory->Id] = $virtualDirectory->GetFullPath();
+            }
+
             $this->Set('VirtualDirectories', $virtualDirectories);
             $this->Set('VirtualDirectory', $virtualDirectory);
 

@@ -97,7 +97,7 @@ class Controller
         $partialViewName = PartialViewPath($this->Core, $viewName);
 
         if(!file_exists($partialViewName)){
-            die('Partial view missing ' . $partialViewName);
+            trigger_error('Partial view missing ' . $partialViewName, E_USER_ERROR);
         }
 
         if($partialViewVars != null){
@@ -106,7 +106,7 @@ class Controller
                     $$key = $var;
                 }
             }else{
-                die('$PartialViewVars is not an array');
+                trigger_error('$PartialViewVars is not an array', E_USER_ERROR);
             }
         }
         include($partialViewName);

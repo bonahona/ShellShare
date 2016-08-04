@@ -5,6 +5,6 @@ create table UploadedFile(
   MimeType varchar(512),
   DocumentId int not null,
   UploadedById int not null,
-  foreign key(DocumentId) references Document(Id),
-  foreign key(UploadedById) references LocalUser(ShellUserId)
+  foreign key(DocumentId) references Document(Id) on delete CASCADE on update cascade,
+  foreign key(UploadedById) references LocalUser(ShellUserId) on delete CASCADE on update cascade
 );

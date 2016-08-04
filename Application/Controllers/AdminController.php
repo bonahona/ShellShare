@@ -1,5 +1,6 @@
 <?php
-class AdminController extends Controller
+require_once('BaseController.php');
+class AdminController extends BaseController
 {
     public function BeforeAction()
     {

@@ -1,6 +1,6 @@
 <?php
-
-class HomeController extends Controller
+require_once('BaseController.php');
+class HomeController extends BaseController
 {
     public function Index()
     {
