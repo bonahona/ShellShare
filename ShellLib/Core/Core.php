@@ -11,14 +11,18 @@ define('VIEWS_FOLDER',              '/Views/');
 define('PARTIAL_FOLDER',            '/Views/Partial/');
 define('LAYOUTS_FOLDER',            '/Views/Layouts');
 define('MODEL_CACHE_FOLDER',        '/Application/Temp/Cache/Models/');
+define('VIEW_CACHE_FOLDER',     '/Application/Temp/Cache/Views/');
 define('CSS_FOLDER',                '/Content/Css/');
 define('JS_FOLDER',                 '/Content/Js/');
 define('IMAGE_FOLDER',              '/Content/Images/');
 define('DATABASE_DRIVER_FOLDER',    './ShellLib/DatabaseDrivers/');
 define('LOGGER_FOLDER',             '/Loggers/');
-define('SHELLLIB_LOGGERS_FOLDER',   '/ShellLib/Loggers/');
+define('SHELL_LIB_LOGGERS_FOLDER',  '/ShellLib/Loggers/');
+define('PAGE_CACHE_FOLDER',          '/PageCaches/');
+define('SHELL_LIB_PAGE_CACHE_FOLDER','/ShellLib/PageCaches/');
 
 define('VIEW_FILE_ENDING', '.php');
+define('MODEL_CACHE_FILE_ENDING', '.model');
 define('MODEL_CACHE_FILE_ENDING', '.model');
 define('PHP_FILE_ENDING', '.php');
 define('CSS_FILE_ENDING', '.css');
@@ -379,7 +383,7 @@ class Core
     // Find the logger classes available in the default shell lib folders
     protected  function FindShellLibLoggers()
     {
-        $shellLibLoggerFolder = Directory(SHELLLIB_LOGGERS_FOLDER);
+        $shellLibLoggerFolder = Directory(SHELL_LIB_LOGGERS_FOLDER);
 
         $loggerFiles = GetAllFiles($shellLibLoggerFolder);
         foreach($loggerFiles as $loggerFile){
