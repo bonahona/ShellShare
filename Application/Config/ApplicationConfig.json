@@ -17,24 +17,6 @@
         "CacheLogger": {
           "Name": "Cache"
         }
-      },
-      {
-        "FileLog": {
-          "Name": "FileLog",
-          "FileName": "/logs/default.log"
-        }
-      },
-      {
-        "PdoSqlLog":{
-          "Name": "Db",
-          "Provider": "mysql",
-          "Server": "127.0.0.1",
-          "Port": 3306,
-          "Username": "root",
-          "Password": "",
-          "Database": "share",
-          "Table": "log"
-        }
       }
     ]
   }

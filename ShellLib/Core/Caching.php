@@ -1,5 +1,5 @@
 <?php
-require_once('ShellLib/Core/IPageCache.php');
+require_once('ShellLib/Core/IOutputCache.php');
 class Caching
 {
 

@@ -1,7 +1,7 @@
 <?php
-class FilePageCache implements IPageCache
+class FileOutputCache implements IOutputCache
 {
-    public function CachePage($request, $data)
+    public function CacheOutput($request, $expires, $data)
     {
 
     }

@@ -18,12 +18,12 @@ define('IMAGE_FOLDER',              '/Content/Images/');
 define('DATABASE_DRIVER_FOLDER',    './ShellLib/DatabaseDrivers/');
 define('LOGGER_FOLDER',             '/Loggers/');
 define('SHELL_LIB_LOGGERS_FOLDER',  '/ShellLib/Loggers/');
-define('PAGE_CACHE_FOLDER',          '/PageCaches/');
-define('SHELL_LIB_PAGE_CACHE_FOLDER','/ShellLib/PageCaches/');
+define('OUTPUT_CACHE_FOLDER',       '/OutputCaches/');
+define('SHELL_LIB_OUTPUT_CACHE_FOLDER','/ShellLib/OutputCaches/');
 
 define('VIEW_FILE_ENDING', '.php');
 define('MODEL_CACHE_FILE_ENDING', '.model');
-define('MODEL_CACHE_FILE_ENDING', '.model');
+define('OUTPUT_CACHE_FILE_ENDING', '.output');
 define('PHP_FILE_ENDING', '.php');
 define('CSS_FILE_ENDING', '.css');
 define('JS_FILE_ENDING', '.js');
@@ -43,6 +43,7 @@ require_once('./ShellLib/Core/DatabaseWhereCondition.php');
 require_once('./ShellLib/Core/CustomObjectSorter.php');
 require_once('./ShellLib/Files/File.php');
 require_once('./ShellLib/Logging/Logging.php');
+require_once('./ShellLib/Core/Caching.php');
 require_once('./ShellLib/Helpers/DirectoryHelper.php');
 require_once('./ShellLib/Helpers/ModelHelper.php');
 require_once('./ShellLib/Helpers/UrlHelper.php');
@@ -73,6 +74,7 @@ class Core
     protected $About;                   // About file is only loaded if any feature requiring it is called.
 
     protected $Logging;
+    protected $Caching;
     protected $ModelCache;
     protected $Models;
     protected $Helpers;
@@ -101,6 +103,7 @@ class Core
     protected $JsFolder;
     protected $ImageFolder;
     protected $LoggerFolder;
+    protected $CacheFolder;
 
     public function GetIsPrimaryCore()
     {
@@ -117,6 +120,10 @@ class Core
 
     public function &GetLogging(){
         return $this->Logging;
+    }
+
+    public function &GetCaching(){
+        return $this->Caching;
     }
 
     public function &GetModelHelper(){
@@ -225,9 +232,13 @@ class Core
                 trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
             }
 
+            // Logging
             $this->Logging = new Logging();
             $this->FindShellLibLoggers();
             $this->FindLoggers($this->LoggerFolder);
+
+            // Caching
+            $this->Caching = new Caching();
 
             $this->Helpers = new Helpers();
             $this->SetupHelpers();
