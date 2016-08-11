@@ -11,15 +11,19 @@ define('VIEWS_FOLDER',              '/Views/');
 define('PARTIAL_FOLDER',            '/Views/Partial/');
 define('LAYOUTS_FOLDER',            '/Views/Layouts');
 define('MODEL_CACHE_FOLDER',        '/Application/Temp/Cache/Models/');
+define('VIEW_CACHE_FOLDER',     '/Application/Temp/Cache/Views/');
 define('CSS_FOLDER',                '/Content/Css/');
 define('JS_FOLDER',                 '/Content/Js/');
 define('IMAGE_FOLDER',              '/Content/Images/');
 define('DATABASE_DRIVER_FOLDER',    './ShellLib/DatabaseDrivers/');
 define('LOGGER_FOLDER',             '/Loggers/');
-define('SHELLLIB_LOGGERS_FOLDER',   '/ShellLib/Loggers/');
+define('SHELL_LIB_LOGGERS_FOLDER',  '/ShellLib/Loggers/');
+define('OUTPUT_CACHE_FOLDER',       '/OutputCaches/');
+define('SHELL_LIB_OUTPUT_CACHE_FOLDER','/ShellLib/OutputCaches/');
 
 define('VIEW_FILE_ENDING', '.php');
 define('MODEL_CACHE_FILE_ENDING', '.model');
+define('OUTPUT_CACHE_FILE_ENDING', '.output');
 define('PHP_FILE_ENDING', '.php');
 define('CSS_FILE_ENDING', '.css');
 define('JS_FILE_ENDING', '.js');
@@ -39,6 +43,7 @@ require_once('./ShellLib/Core/DatabaseWhereCondition.php');
 require_once('./ShellLib/Core/CustomObjectSorter.php');
 require_once('./ShellLib/Files/File.php');
 require_once('./ShellLib/Logging/Logging.php');
+require_once('./ShellLib/Core/Caching.php');
 require_once('./ShellLib/Helpers/DirectoryHelper.php');
 require_once('./ShellLib/Helpers/ModelHelper.php');
 require_once('./ShellLib/Helpers/UrlHelper.php');
@@ -69,6 +74,7 @@ class Core
     protected $About;                   // About file is only loaded if any feature requiring it is called.
 
     protected $Logging;
+    protected $Caching;
     protected $ModelCache;
     protected $Models;
     protected $Helpers;
@@ -77,7 +83,7 @@ class Core
     protected $Database;
     protected $Controller;
 
-    protected $IsPrimaryCode;
+    protected $IsPrimaryCore;
 
     // Used for the primary core of the application
     protected $Plugins;
@@ -97,10 +103,11 @@ class Core
     protected $JsFolder;
     protected $ImageFolder;
     protected $LoggerFolder;
+    protected $CacheFolder;
 
     public function GetIsPrimaryCore()
     {
-        return $this->IsPrimaryCode;
+        return $this->IsPrimaryCore;
     }
 
     public function &GetModelCache(){
@@ -113,6 +120,10 @@ class Core
 
     public function &GetLogging(){
         return $this->Logging;
+    }
+
+    public function &GetCaching(){
+        return $this->Caching;
     }
 
     public function &GetModelHelper(){
@@ -208,7 +219,7 @@ class Core
     function __construct($subPath = null, $primaryCore = null)
     {
         if($subPath == null){
-            $this->IsPrimaryCode = true;
+            $this->IsPrimaryCore = true;
             self::$Instance = $this;
             $this->PrimaryCore = $this;
 
@@ -221,9 +232,13 @@ class Core
                 trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
             }
 
+            // Logging
             $this->Logging = new Logging();
             $this->FindShellLibLoggers();
             $this->FindLoggers($this->LoggerFolder);
+
+            // Caching
+            $this->Caching = new Caching();
 
             $this->Helpers = new Helpers();
             $this->SetupHelpers();
@@ -235,7 +250,7 @@ class Core
             $this->SetupPlugins();
 
         }else{
-            $this->IsPrimaryCode = false;
+            $this->IsPrimaryCore = false;
             $this->PluginPath = $subPath;
             $this->PrimaryCore = $primaryCore;
 
@@ -379,7 +394,7 @@ class Core
     // Find the logger classes available in the default shell lib folders
     protected  function FindShellLibLoggers()
     {
-        $shellLibLoggerFolder = Directory(SHELLLIB_LOGGERS_FOLDER);
+        $shellLibLoggerFolder = Directory(SHELL_LIB_LOGGERS_FOLDER);
 
         $loggerFiles = GetAllFiles($shellLibLoggerFolder);
         foreach($loggerFiles as $loggerFile){
@@ -483,7 +498,7 @@ class Core
 
         $handler = $this->CreateHandler($controllerName, $actionName, $requestData);
 
-        // The controller or the action does not exists. If debuging is on, die and give an error, otherwise reroute to the notFound route
+        // The controller or the action does not exists. If debugging is on, die and give an error, otherwise reroute to the notFound route
         if($handler['error'] == 1){
             $dieOnRoutingError = $this->DebugDieOnRoutingError();
             if($dieOnRoutingError){
@@ -559,7 +574,7 @@ class Core
         return false;
     }
 
-    public function CanHandleRoute($controllerName, $requestData)
+    public function CanHandleRoute($controllerName)
     {
         $controllerClassName = $controllerName . 'Controller';
         $controllerPath = Directory($this->GetControllerFolder() . $controllerClassName . '.php');
@@ -614,8 +629,10 @@ class Core
         $controller->Models         = $this->Models;
         $controller->RequestUri     = $requestData['RequestUri'];
         $controller->RequestString  = $requestData['RequestString'];
+        $controller->Parameters     = $requestData['Variables'];
         $controller->Helpers        = $this->Helpers;
         $controller->Logging        = $this->Logging;
+        $controller->Caching        = $this->Caching;
         $controller->Helpers->SetCurrentController($controller);
 
         return array(
