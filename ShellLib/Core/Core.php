@@ -83,7 +83,7 @@ class Core
     protected $Database;
     protected $Controller;
 
-    protected $IsPrimaryCode;
+    protected $IsPrimaryCore;
 
     // Used for the primary core of the application
     protected $Plugins;
@@ -107,7 +107,7 @@ class Core
 
     public function GetIsPrimaryCore()
     {
-        return $this->IsPrimaryCode;
+        return $this->IsPrimaryCore;
     }
 
     public function &GetModelCache(){
@@ -219,7 +219,7 @@ class Core
     function __construct($subPath = null, $primaryCore = null)
     {
         if($subPath == null){
-            $this->IsPrimaryCode = true;
+            $this->IsPrimaryCore = true;
             self::$Instance = $this;
             $this->PrimaryCore = $this;
 
@@ -250,7 +250,7 @@ class Core
             $this->SetupPlugins();
 
         }else{
-            $this->IsPrimaryCode = false;
+            $this->IsPrimaryCore = false;
             $this->PluginPath = $subPath;
             $this->PrimaryCore = $primaryCore;
 
@@ -498,7 +498,7 @@ class Core
 
         $handler = $this->CreateHandler($controllerName, $actionName, $requestData);
 
-        // The controller or the action does not exists. If debuging is on, die and give an error, otherwise reroute to the notFound route
+        // The controller or the action does not exists. If debugging is on, die and give an error, otherwise reroute to the notFound route
         if($handler['error'] == 1){
             $dieOnRoutingError = $this->DebugDieOnRoutingError();
             if($dieOnRoutingError){
@@ -574,7 +574,7 @@ class Core
         return false;
     }
 
-    public function CanHandleRoute($controllerName, $requestData)
+    public function CanHandleRoute($controllerName)
     {
         $controllerClassName = $controllerName . 'Controller';
         $controllerPath = Directory($this->GetControllerFolder() . $controllerClassName . '.php');
@@ -629,8 +629,10 @@ class Core
         $controller->Models         = $this->Models;
         $controller->RequestUri     = $requestData['RequestUri'];
         $controller->RequestString  = $requestData['RequestString'];
+        $controller->Parameters     = $requestData['Variables'];
         $controller->Helpers        = $this->Helpers;
         $controller->Logging        = $this->Logging;
+        $controller->Caching        = $this->Caching;
         $controller->Helpers->SetCurrentController($controller);
 
         return array(
