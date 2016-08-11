@@ -150,7 +150,7 @@ class FormHelper
     public function Select($name, $list, $options = null)
     {
         if(!is_array($list) && !$list instanceof Collection){
-            die('In Formhelper->Select. List is not an array nor Collection');
+            trigger_error("List $name is not an array nor Collection", E_USER_WARNING);
         }
 
         if($options == null){
@@ -267,7 +267,7 @@ class FormHelper
     public function End()
     {
         if($this->m_currentForm == null){
-            die('No form is currently open');
+            trigger_error('No form is currently open', E_USER_WARNING);
         }else{
             $this->m_currentForm = null;
             return "</form>\n";
@@ -311,7 +311,7 @@ class FormHelper
         };
 
         if(!is_array($attributes)){
-            die("Attributes is not an array");
+            trigger_error("Attributes is not an array", E_USER_WARNING);
         }
 
         $attributeArray = array();
