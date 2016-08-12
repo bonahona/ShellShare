@@ -279,4 +279,28 @@ class Controller
     public function BeforeRender(){
         header('Content-Type: ' . $this->MimeType);
     }
+
+    // Adds a request identifier to the list of cached output for automatic output cache handling
+    public function EnableOutputCacheFor($requestData, $validity)
+    {
+
+    }
+
+    // Manual adding of an output cache entry or updates an existing one
+    public function AddOutputCache($requestData, $output, $validity)
+    {
+
+    }
+
+    // Manual invalidation
+    public function InvalidateOutputCache($requestData)
+    {
+
+    }
+
+    // Manual check for a cache entry
+    public function IsOutputCached($requestData)
+    {
+
+    }
 }
