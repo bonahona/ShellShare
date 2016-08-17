@@ -57,7 +57,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-3 col-md-2 sidebar hidden">
             <?php if(isset($RootDirectories)):?>
                 <?php echo $this->PartialView('Sidebar', array('RootDirectories' => $RootDirectories));?>
             <?php endif;?>

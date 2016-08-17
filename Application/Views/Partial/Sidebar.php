@@ -25,13 +25,24 @@ function PrintBranch($directories)
 }
 ?>
 
-<ul id="SideBarTree">
-    <li folder-link="/">
-        <a href="#"><?php echo $this->Html->SafeHtml('<root>');?></a>
-        <ul>
-            <li>
-                <?php PrintBranch($RootDirectories);?>
+<div class="row">
+    <div class="col-lg-12">
+        <ul id="SideBarTree">
+            <li folder-link="/">
+                <a href="#"><?php echo $this->Html->SafeHtml('<root>');?></a>
+                <ul>
+                    <li>
+                        <?php PrintBranch($RootDirectories);?>
+                    </li>
+                </ul>
             </li>
         </ul>
-    </li>
-</ul>
+    </div>
+</div>
+<?php if($this->IsAdmin()):?>
+    <div class="row margin-top ">
+        <div class="col-lg-12">
+            <a href="/VirtualDirectory/Create/" class="btn btn-md btn-primary">Add root directory</a>
+        </div>
+    </div>
+<?php endif;?>

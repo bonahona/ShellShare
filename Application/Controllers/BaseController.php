@@ -3,6 +3,7 @@ class BaseController extends Controller
 {
     public $RootDirectories;
     public $VirtualDirectories;
+    public $UserPrivileges;
 
     public function BeforeAction()
     {
@@ -17,7 +18,22 @@ class BaseController extends Controller
 
         if($user != null) {
             $userPrivileges = $this->Helpers->ShellAuth->GetUserApplicationPrivileges($user['Id']);
-            $this->Logging->Write($userPrivileges);
+
+            $this->UserPrivileges = $userPrivileges['Data'];
+            $this->Set('UserPrivileges', $this->UserPrivileges);
+        }
+    }
+
+    public function IsAdmin()
+    {
+        if($this->UserPrivileges == null){
+            return false;
+        }
+
+        if($this->UserPrivileges['UserLevel'] > 0){
+            return true;
+        }else{
+            return false;
         }
     }
 
