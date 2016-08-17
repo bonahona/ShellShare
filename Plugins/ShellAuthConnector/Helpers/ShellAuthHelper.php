@@ -187,6 +187,16 @@ class ShellAuthHelper implements  IHelper
         return $this->SendToServer($payLoad, $callPath);
     }
 
+    public function GetUserApplicationPrivileges($userId)
+    {
+        $payLoad = array(
+            'Id' => $userId
+        );
+
+        $callPath = $this->GetApplicationPath('GetUserApplicationPrivileges');
+        return $this->SendToServer($payLoad, $callPath);
+    }
+
     protected function GetApplicationPath($callName)
     {
         if(!array_key_exists($callName, $this->ShellAuthMethodPaths)){
@@ -232,6 +242,7 @@ class ShellAuthHelper implements  IHelper
         }
 
         curl_close($curl);
+
         return json_decode($response, true);
     }
 }

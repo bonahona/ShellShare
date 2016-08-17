@@ -11,6 +11,14 @@ class BaseController extends Controller
 
         $this->VirtualDirectories = $this->Models->VirtualDirectory->All();
         $this->Set('VirtualDirectories', $this->VirtualDirectories);
+
+        $user = $this->GetCurrentUser();
+        $this->Logging->Write($user);
+
+        if($user != null) {
+            $userPrivileges = $this->Helpers->ShellAuth->GetUserApplicationPrivileges($user['Id']);
+            $this->Logging->Write($userPrivileges);
+        }
     }
 
     protected function IsFolderOpen($folderPath)

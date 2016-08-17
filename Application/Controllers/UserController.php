@@ -21,12 +21,7 @@ class UserController extends BaseController
         if($this->IsPost()) {
             $user = $this->Data->RawParse('User');
 
-            //$response = $this->Helpers->ShellAuth->Login($user['Username'], $user['Password']);
-
-            // Always let the user in, dont ever try to login via auth.local
-            $response = array(
-                'Error' => 0,
-            );
+            $response = $this->Helpers->ShellAuth->Login($user['Username'], $user['Password']);
 
             if($response['Error'] != 0){
                 foreach($response['ErrorList'] as $error){
