@@ -345,7 +345,7 @@ class Core
         if(!empty($this->DatabaseConfig)) {
 
             $databaseType = $this->DatabaseConfig['Database']['DatabaseType'];
-
+            
             // Handle the provider types given
             if($databaseType == 'MySqli'){
                 $databaseProviderPath = DATABASE_DRIVER_FOLDER . 'MySqliDatabase.php';
