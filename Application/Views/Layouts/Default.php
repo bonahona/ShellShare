@@ -57,7 +57,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar hidden">
+        <div class="col-sm-3 col-md-2 sidebar">
             <?php if(isset($RootDirectories)):?>
                 <?php echo $this->PartialView('Sidebar', array('RootDirectories' => $RootDirectories));?>
             <?php endif;?>
@@ -67,12 +67,19 @@
                 <?php echo $this->PartialView('Breadcrumbs', array('BreadCrumbs' => $BreadCrumbs));?>
             <?php endif;?>
             <?php echo $view;?>
-            <div class="row">
-                <?php foreach($this->Logging->Cache->Fetch() as $logEntry):?>
-                    <div class="col-lg-12">
-                        <?php var_dump($logEntry);?>
+            <div class="row margin-top">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Cache log</h3>
                     </div>
-                <?php endforeach;?>
+                    <div class="panel-body">
+                        <?php foreach($this->Logging->Cache->Fetch() as $logEntry):?>
+                            <div class="col-lg-12">
+                                <?php var_dump($logEntry);?>
+                            </div>
+                        <?php endforeach;?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -45,7 +45,7 @@ class Models
 
     public function GetModelForName($modelName)
     {
-        if(!in_array($modelName, $this->ModelCollections)){
+        if(!array_key_exists($modelName, $this->ModelCollections)){
             trigger_error('Missing model for table name ' . $modelName, E_USER_WARNING);
             return;
         }
