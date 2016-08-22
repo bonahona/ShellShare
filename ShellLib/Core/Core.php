@@ -725,7 +725,9 @@ class Core
         foreach($requestParameters as $key => $parameter){
             // The first 3 are not used as variables
             if($key != 0 && $key != 1 && $key != 2){
-                $variables[] = $parameter;
+                if($parameter != '') {
+                    $variables[] = $parameter;
+                }
             }
         }
 
