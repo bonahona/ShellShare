@@ -5,7 +5,7 @@ class VirtualDirectory extends Model
 
     public function GetLinkPath()
     {
-        return '/Files/Details/' . $this->GetFullPath();
+        return '/Files/Details/' . $this->GetFullPath() . '/';
     }
 
     public function GetFullPath()

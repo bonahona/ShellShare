@@ -4,15 +4,13 @@ class FilesController extends BaseController
 {
     public function Details()
     {
-        $args = func_get_args();
-        $args = array_slice($args, 0, count($args) -1);
-
-        $virtualDirectory = $this->GetVirtualDirectory($args);
+        $args = $this->Parameters;
+        $virtualDirectory = $this->GetVirtualDirectory($args, $this->GetCurrentUser());
 
         $this->Title = end($args);
 
-        if($virtualDirectory == null){
-            return $this->HttpNotFound();
+        if(!$virtualDirectory == null){
+            $this->ToggleFolder($virtualDirectory->Id);
         }
 
         $this->Set('VirtualDirectory', $virtualDirectory);

@@ -37,8 +37,26 @@ class BaseController extends Controller
         }
     }
 
-    protected function IsFolderOpen($folderPath)
+    public function ToggleFolder($folderId)
     {
-        return true;
+        if(!isset($_SESSION['OpenFolders'])){
+            $_SESSION['OpenFolders'] = array();
+        }
+
+        // Toggle the state of the folder
+        $_SESSION['OpenFolders'][$folderId] = !$_SESSION['OpenFolders'][$folderId];
+    }
+
+    public function IsFolderOpen($folderId)
+    {
+        if(!isset($_SESSION['OpenFolders'])){
+            return false;
+        }
+
+        if(!isset($_SESSION['OpenFolders'][$folderId])){
+            return false;
+        }
+
+        return $_SESSION['OpenFolders'][$folderId];
     }
 }
