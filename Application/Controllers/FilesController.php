@@ -17,36 +17,62 @@ class FilesController extends BaseController
         return $this->View();
     }
 
-    public function GetDirectoryContents($filePath)
+    public function Upload($parentDirectoryId = 0)
     {
-        $args = func_get_args();
-        $args = array_slice($args, 0, count($args) -1);
+        $this->Title = 'Upload file';
 
-        $currentUser = $this->GetCurrentUser();
-        $virtualDirectory = $this->GetVirtualDirectory($args, $currentUser);
-        if($virtualDirectory == null){
-            $result = array(
-                'found' => false
-            );
-
-            return $this->Json($result);
+        if(!$this->CanUploadFile()){
+            return $this->HttpNotFound();
         }
 
-        $documents = array();
-        $dbDocuments = $virtualDirectory->Documents;
-        foreach($dbDocuments as $dbDocument){
-            $document = array(
-                'name' => $dbDocument->Name
-            );
-            $documents[$dbDocument->Name] = $document;
+        if($this->IsPost() && !$this->Data->IsEmpty()){
+            $document = $this->Data->Parse('Document', $this->Models->Document);
+            var_dump($document->Object());
+
+            
+            $uploadedFile = $this->Files['UploadedFile'];
+            var_dump($uploadedFile);
+
+        }else{
+            $parentDirectory = $this->Models->VirtualDirectory->Find($parentDirectoryId);
+            if($parentDirectory == null){
+                return $this->HttpNotFound();
+            }
+
+            $dbVirtualDirectories = $this->Models->VirtualDirectory->All();
+            $virtualDirectories = array();
+
+            $virtualDirectories[0] = $this->Html->SafeHtml('<root>');
+            foreach($dbVirtualDirectories as $dbVirtualDirectory){
+                $virtualDirectories[$dbVirtualDirectory->Id] = $dbVirtualDirectory->GetFullPath();
+            }
+
+            $this->Set('VirtualDirectories', $virtualDirectories);
+
+            $currentUser = $this->GetCurrentUser();
+            $document = $this->Models->Document->Create(array('OwnerId' => $currentUser['Id'], 'DirectoryId' => $parentDirectory->Id));
+            $this->Set('Document', $document);
+
+            return $this->View();
+        }
+    }
+
+    public function CanUploadFile()
+    {
+        if($this->IsLoggedIn()) {
+            return true;
         }
 
-        $result = array(
-            'found' => true,
-            'documents' => $documents
-        );
+        return false;
+    }
 
-        return $this->Json($result);
+    public function CanCreateFolder()
+    {
+        if($this->IsLoggedIn()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function GetVirtualDirectory($path, $currentUser)
@@ -54,7 +80,6 @@ class FilesController extends BaseController
         if(!is_array($path)){
             return null;
         }
-
         $directories = $this->Models->VirtualDirectory->Where(array('ParentDirectoryId' => null));
         $directory = null;
 
@@ -65,10 +90,9 @@ class FilesController extends BaseController
             }
 
             // Check user priviles for every directory in the file hierarchy
-            if(!$this->CheckUserPrivileges($directory, $currentUser)){
+            if(!$this->CheckUserPrivileges($directory, $currentUser)) {
                 return null;
             }
-
 
             $directories = $directory->VirtualDirectories->Where(array('ParentDirectoryId' => $directory->Id));
         }

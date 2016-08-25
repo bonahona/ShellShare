@@ -14,7 +14,6 @@ class BaseController extends Controller
         $this->Set('VirtualDirectories', $this->VirtualDirectories);
 
         $user = $this->GetCurrentUser();
-        $this->Logging->Write($user);
 
         if($user != null) {
             $userPrivileges = $this->Helpers->ShellAuth->GetUserApplicationPrivileges($user['Id']);
@@ -44,7 +43,11 @@ class BaseController extends Controller
         }
 
         // Toggle the state of the folder
-        $_SESSION['OpenFolders'][$folderId] = !$_SESSION['OpenFolders'][$folderId];
+        if(isset($_SESSION['OpenFolders'][$folderId])) {
+            $_SESSION['OpenFolders'][$folderId] = !$_SESSION['OpenFolders'][$folderId];
+        }else{
+            $_SESSION['OpenFolders'][$folderId] = true;
+        }
     }
 
     public function IsFolderOpen($folderId)

@@ -21,6 +21,7 @@ class VirtualDirectoryController extends BaseController
 
             $virtualDirectory->AccessRightsMask = $this->ConvertRightsToMask(array());
             $virtualDirectory->Save();
+
             return $this->Redirect($virtualDirectory->GetLinkPath());
         }else{
             $currentUser = $this->GetCurrentUser();
@@ -28,15 +29,14 @@ class VirtualDirectoryController extends BaseController
             if($parentDirectory == null){
                 $virtualDirectory = $this->Models->VirtualDirectory->Create(array('DirectoryId' => null, 'OwnerId' => $currentUser['Id']));
             }else {
-                $virtualDirectory = $this->Models->VirtualDirectory->Create(array('DirectoryId' => $parentDirectory->Id, 'OwnerId' => $currentUser['Id']));
+                $virtualDirectory = $this->Models->VirtualDirectory->Create(array('ParentDirectoryId' => $parentDirectory->Id, 'OwnerId' => $currentUser['Id']));
             }
             $dbVirtualDirectories = $this->Models->VirtualDirectory->All();
-
             $virtualDirectories = array();
 
             $virtualDirectories[0] = $this->Html->SafeHtml('<root>');
-            foreach($dbVirtualDirectories as $virtualDirectory){
-                $virtualDirectories[$virtualDirectory->Id] = $virtualDirectory->GetFullPath();
+            foreach($dbVirtualDirectories as $dbVirtualDirectory){
+                $virtualDirectories[$dbVirtualDirectory->Id] = $dbVirtualDirectory->GetFullPath();
             }
 
             $this->Set('VirtualDirectories', $virtualDirectories);
