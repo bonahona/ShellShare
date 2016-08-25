@@ -86,6 +86,7 @@ class Model
         $this->IsDirty = false;
     }
 
+    /* @return mixed */
     function __get($propertyName)
     {
         if(array_key_exists($propertyName, $this->Properties)) {

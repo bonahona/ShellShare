@@ -104,6 +104,7 @@ class Logging
         );
     }
 
+    /* @return ILog */
     public function __get($loggerName)
     {
         if(array_key_exists($loggerName, $this->Loggers)){

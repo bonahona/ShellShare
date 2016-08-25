@@ -6,30 +6,75 @@ define('DEFAULT_RETURN_CODE', '200');
 class Controller
 {
     // State data
+    /* @var string */
     public $Action;
+
+    /* @var string */
     public $Controller;
+
+    /* @var string */
     public $Verb;
+
+    /* @var string */
     public $RequestUri;
+
+    /* @var string */
     public $RequestString;
+
+    /* @var array */
     public $Parameters = array();        // Stores all parameters sent in in the uri that follow the Controller and Action
+
+    /* @var Models */
     public $Models;
+
+    /* @var FormHelper */
     public $Form;
+
+    /* @var HtmlHelper */
     public $Html;
+
+    /* @var ModelValidationHelper */
     public $ModelValidation;
+
+    /* @var Core */
     public $Core;                       // Main core for this controller
+
+    /* @var Core */
     public $CurrentCore;                // Should usually be the same one as the Core, but might during rendering, be set to some other one for resource purposes
+
+    /* @var array */
     public $Config;
+
+    /* @var Helpers */
     public $Helpers;                    // Reference the main core's helpers list
+
+    /* @var Logging */
     public $Logging;
+
+    /* @var Cache */
     public $Cache;                      // Reference to the Core's cache object
 
     // Data sent
+
+    /* @var DataHelper */
     public $Post;                       // Stores all Post data variables sent in
+
+    /* @var DataHelper */
     public $Get;                        // Stores all get variables sent in
+
+    /* @var DataHelper */
     public $Data;                       // Stores both the Get and Post variables
+
+    /* @var DataHelper */
     public $Files;                      // Stores any files sent with the request
+
+    /* @var SessionHelper */
     public $Session = array();          // Stores all the session data
+
+    /* @var array */
     public $Cookies = array();          // Stores all cookies sent
+
+    /* @var string */
     public $Server = array();           // Stores all server variables
 
     // Response data
