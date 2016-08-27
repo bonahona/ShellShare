@@ -17,4 +17,14 @@ class File
 
         return false;
     }
+
+    public function GetFileName()
+    {
+        return basename($this->Path);
+    }
+
+    public function GetFileExtension()
+    {
+        return end(explode(".", $this->Name));
+    }
 }
