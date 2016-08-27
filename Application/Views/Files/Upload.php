@@ -18,7 +18,10 @@
         </div>
         <div class="form-group">
             <label>File</label>
-            <?php echo $this->Form->File('UploadedFile', array('attributes' => array('class' => 'form-control')));?>
+            <span class="btn btn-medium btn-primary btn-file form-control">
+                Browse
+                <?php echo $this->Form->File('UploadedFile');?>
+            </span>
         </div>
         <div class="row">
             <div class="col-lg-12">

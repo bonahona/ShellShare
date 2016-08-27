@@ -4,16 +4,70 @@ class FilesController extends BaseController
 {
     public function Details()
     {
-        $args = $this->Parameters;
-        $virtualDirectory = $this->GetVirtualDirectory($args, $this->GetCurrentUser());
+        $path = $this->Parameters;
+        $this->Title = end($path);
 
-        $this->Title = end($args);
+        $node = $this->GetNode($path, $this->GetCurrentUser());
 
-        if(!$virtualDirectory == null){
-            $this->ToggleFolder($virtualDirectory->Id);
+        if($node == null){
+            return $this->HttpNotFound();
+        } else if(is_a($node, 'VirtualDirectory')){
+            $this->ToggleFolder($node->Id);
+            $this->Set('VirtualDirectory', $node);
+            return $this->View('DirectoryDetails');
+        }else if(is_a($node, 'Document')){
+            $this->Set('Document', $node);
+            return $this->View('DocumentDetails');
         }
 
-        $this->Set('VirtualDirectory', $virtualDirectory);
+        // Fallback
+        return $this->HttpNotFound();
+    }
+
+    public function Download()
+    {
+        $path = $this->Parameters;
+        $document = $this->GetNode($path, $this->GetCurrentUser());
+
+        if(!is_a($document, 'Document')){
+            return $this->HttpNotFound();
+        }
+
+        $uploadedFile = $document->GetCurrentFile();
+
+        header('Content-Type: ' . $uploadedFile->MimeType);
+        $content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
+        echo $content;
+    }
+
+    public function DownloadHistory($uploadedFileId = null)
+    {
+        if($uploadedFileId == null){
+            return $this->HttpNotFound();
+        }
+
+        $uploadedFile = $this->Models->UploadedFile->Find($uploadedFileId);
+        if($uploadedFile == null){
+            return $this->HttpNotFound();
+        }
+
+        header('Content-Type: ' . $uploadedFile->MimeType);
+        $content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
+        echo $content;
+    }
+
+    public function History()
+    {
+        $path = $this->Parameters;
+        $this->Title = end($path) . ' history';
+
+        $document = $this->GetNode($path, $this->GetCurrentUser());
+
+        if(!is_a($document, 'Document')){
+            return $this->HttpNotFound();
+        }
+
+        $this->Set('Document', $document);
         return $this->View();
     }
 
@@ -27,11 +81,38 @@ class FilesController extends BaseController
 
         if($this->IsPost() && !$this->Data->IsEmpty()){
             $document = $this->Data->Parse('Document', $this->Models->Document);
-            var_dump($document->Object());
-
             
-            $uploadedFile = $this->Files['UploadedFile'];
-            var_dump($uploadedFile);
+            $file = $this->Files['UploadedFile'];
+
+            $fileName = uniqid();
+            $directory = '/Upload/Files/';
+            $fileExtension = $file->GetFileExtension();
+
+            if(!is_dir($directory)){
+                mkdir($directory, 777, true);
+            }
+
+            $completePath = $directory . $fileName . '.' . $fileExtension;
+            $currentUser = $this->GetCurrentUser();
+            $now = time();
+
+            if($file->Save($completePath)){
+                $document->Save();
+                $uploadedFile = $this->Models->UploadedFile->Create();
+                $uploadedFile->LocalFilePath = $completePath;
+                $uploadedFile->CreateDate = $now;
+                $uploadedFile->MimeType = $file->Type;
+                $uploadedFile->FileExtension = $fileExtension;
+                $uploadedFile->DocumentId = $document->Id;
+                $uploadedFile->UploadedById = $currentUser['Id'];
+                $uploadedFile->Save();
+
+                $redirectPath = $document->GetHistoryPath();
+                return $this->Redirect($redirectPath);
+            }
+
+            $this->Set('Document', $document);
+            return $this->View();
 
         }else{
             $parentDirectory = $this->Models->VirtualDirectory->Find($parentDirectoryId);
@@ -57,6 +138,59 @@ class FilesController extends BaseController
         }
     }
 
+    public function Update($documentId = null)
+    {
+        if($documentId == null){
+            return $this->HttpNotFound();
+        }
+
+        $document = $this->Models->Document->Find($documentId);
+        if($document == null){
+            return $this->HttpNotFound();
+        }
+
+        $this->Title = $document->Name;
+
+        if($this->IsPost() && !$this->Data->IsEmpty()){
+            $file = $this->Files['UploadedFile'];
+
+            $fileName = uniqid();
+            $directory = '/Upload/Files/';
+            $fileExtension = $file->GetFileExtension();
+
+            if(!is_dir($directory)){
+                mkdir($directory, 777, true);
+            }
+
+            $completePath = $directory . $fileName . '.' . $fileExtension;
+            $currentUser = $this->GetCurrentUser();
+            $now = time();
+
+            if($file->Save($completePath)){
+                $document->Save();
+                $uploadedFile = $this->Models->UploadedFile->Create();
+                $uploadedFile->LocalFilePath = $completePath;
+                $uploadedFile->CreateDate = $now;
+                $uploadedFile->MimeType = $file->Type;
+                $uploadedFile->FileExtension = $fileExtension;
+                $uploadedFile->DocumentId = $document->Id;
+                $uploadedFile->UploadedById = $currentUser['Id'];
+                $uploadedFile->Save();
+
+                $redirectPath = $document->GetHistoryPath();
+                return $this->Redirect($redirectPath);
+            }
+
+            return $this->View();
+        }else{
+            $this->Set('Document', $document);
+
+            $uploadedFile = $this->Models->UploadedFile->Create(array('DocumentId' => $documentId));
+            $this->Set('UploadedFile', $uploadedFile);
+            return $this->View();
+        }
+    }
+
     public function CanUploadFile()
     {
         if($this->IsLoggedIn()) {
@@ -75,11 +209,28 @@ class FilesController extends BaseController
         return false;
     }
 
+    private function GetNode($path, $currentUser)
+    {
+        $virtualDirectory = $this->GetVirtualDirectory($path, $this->GetCurrentUser());
+
+        if(!$virtualDirectory == null && is_a($virtualDirectory, 'VirtualDirectory')){
+            return $virtualDirectory;
+        }
+
+        if($virtualDirectory == null){
+            $document = $this->GetDocument($path, $this->GetCurrentUser());
+           return $document;
+        }
+
+        return null;
+    }
+
     private function GetVirtualDirectory($path, $currentUser)
     {
         if(!is_array($path)){
             return null;
         }
+
         $directories = $this->Models->VirtualDirectory->Where(array('ParentDirectoryId' => null));
         $directory = null;
 
@@ -98,6 +249,25 @@ class FilesController extends BaseController
         }
 
         return $directory;
+    }
+
+    private function GetDocument($path, $currentUser)
+    {
+        if(!is_array($path)){
+            return null;
+        }
+
+        // Strip away the last entry
+        $fileName = end($path);
+        array_pop($path);
+
+        $parentDirectory = $this->GetVirtualDirectory($path, $currentUser);
+        if($parentDirectory == null){
+            return null;
+        }
+
+        $document = $parentDirectory->Documents->Where(array('Name' => $fileName))->First();
+        return $document;
     }
 
     private function CheckUserPrivileges($virtualDirectory, $currentUser)

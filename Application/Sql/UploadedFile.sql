@@ -3,6 +3,7 @@ create table UploadedFile(
   LocalFilePath varchar(1024),
   CreateDate varchar(128),
   MimeType varchar(512),
+  FileExtension varchar(32),
   DocumentId int not null,
   UploadedById int not null,
   foreign key(DocumentId) references Document(Id) on delete CASCADE on update cascade,
