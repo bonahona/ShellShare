@@ -45,11 +45,16 @@
                 <?php endif;?>
             </ul>
             <form method="get" action="/Home/Search" class="navbar-form navbar-right">
-                <?php if(isset($SearchQuery)):?>
-                    <input type="text" name="keywords" class="form-control" placeholder="Search..."/ value="<?php echo $SearchQuery;?>">
-                <?php else:?>
-                    <input type="text" name="keywords" class="form-control" placeholder="Search..."/>
-                <?php endif;?>
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </div>
+                    <?php if(isset($SearchQuery)):?>
+                        <input type="text" name="keywords" class="form-control" placeholder="Search..."/ value="<?php echo $SearchQuery;?>">
+                    <?php else:?>
+                        <input type="text" name="keywords" class="form-control" placeholder="Search..."/>
+                    <?php endif;?>
+                </div>
             </form>
         </div>
     </div>

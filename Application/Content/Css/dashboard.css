@@ -214,3 +214,8 @@ ul
     cursor: inherit;
     display: block;
 }
+
+.panel-heading {
+    font-weight: bold;
+    font-size: 1.1em;
+}

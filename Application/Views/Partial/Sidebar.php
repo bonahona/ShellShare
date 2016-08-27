@@ -23,25 +23,36 @@ function PrintBranch($directories, $controller)
 }
 ?>
 
-<div class="row">
-    <div class="col-lg-12">
-        <ul id="SideBarTree" class="tree">
-            <li folder-link="/" class="branch">
-                <i class="indicator glyphicon glyphicon-folder-open"></i>
-                <a href="/Files/Details/"><?php echo $this->Html->SafeHtml('<root>');?></a>
-                <ul>
-                    <li>
-                        <?php PrintBranch($RootDirectories, $this);?>
+<div class="panel panel-default">
+    <div class="panel-heading">Directory</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <ul id="SideBarTree" class="tree">
+                    <li folder-link="/" class="branch">
+                        <i class="indicator glyphicon glyphicon-folder-open"></i>
+                        <a href="/Files/Details/"><?php echo $this->Html->SafeHtml('<root>');?></a>
+                        <ul>
+                            <li>
+                                <?php PrintBranch($RootDirectories, $this);?>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
-            </li>
-        </ul>
-    </div>
-</div>
-<?php if($this->IsAdmin()):?>
-    <div class="row margin-top ">
-        <div class="col-lg-12">
-            <a href="/VirtualDirectory/Create/" class="btn btn-md btn-primary">Add root directory</a>
+            </div>
         </div>
     </div>
+</div>
+
+<?php if($this->IsAdmin()):?>
+<div class="panel panel-default">
+    <div class="panel-heading">Actions</div>
+    <div class="panel-body">
+        <div class="row margin-top ">
+            <div class="col-lg-12">
+                <a href="/VirtualDirectory/Create/" class="btn btn-md btn-primary col-lg-12">Add root directory</a>
+            </div>
+        </div>
+    </div>
+</div>
 <?php endif;?>

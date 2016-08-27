@@ -36,8 +36,14 @@
 
 <?php if($this->CanUploadFile()):?>
     <div class="row">
-        <div class="col-lg-6">
-            <a href="<?php echo $Document->GetUpdatePath();?>"><span class="btn btn-medium btn-primary">Upload new file</span></a>
+        <div class="col-lg-12">
+            <a href="<?php echo $Document->GetUpdatePath();?>"><span class="btn btn-medium btn-primary col-lg-2">Upload new file</span></a>
         </div>
     </div>
 <?php endif;?>
+
+<div class="row margin-top">
+    <div class="col-lg-12">
+        <a href="<?php echo $Document->Directory->GetLinkPath();?>" class="btn btn-medium btn-default col-lg-2">Back</a>
+    </div>
+</div>
