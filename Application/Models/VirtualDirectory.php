@@ -33,6 +33,6 @@ class VirtualDirectory extends Model
 
     public function GetSearchResultContext()
     {
-        return "Meep";
+        return '';
     }
 }
