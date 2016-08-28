@@ -6,7 +6,7 @@ class VirtualDirectoryController extends BaseController
     {
         $this->Title = 'Create virtual directory';
 
-        if($parentDirectoryId !== ''){
+        if($parentDirectoryId !== null){
             $parentDirectory = $this->Models->VirtualDirectory->Find($parentDirectoryId);
             if($parentDirectory == null){
                 return $this->HttpNotFound();
