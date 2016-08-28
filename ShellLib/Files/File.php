@@ -25,6 +25,7 @@ class File
 
     public function GetFileExtension()
     {
-        return end(explode(".", $this->Name));
+        $fileParts = explode(".", $this->Name);
+        return end($fileParts);
     }
 }
