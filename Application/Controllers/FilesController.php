@@ -191,6 +191,82 @@ class FilesController extends BaseController
         }
     }
 
+    public function Edit($id = null)
+    {
+        if($id == null){
+            return $this->HttpNotFound();
+        }
+
+        $document = $this->Models->Document->Find($id);
+        if($document == null){
+            return $this->HttpNotFound();
+        }
+
+        if(!$this->CanEditDocument($id)){
+            return $this->HttpNotFound();
+        }
+
+        $this->Title = 'Edit ' . $document->Name;
+
+        if($this->IsPost() && !$this->Data->IsEmpty()){
+            $document = $this->Data->DbParse('Document', $this->Models->Document);
+            $document->Save();
+
+            $redirectUrl = $document->GetHistoryPath();
+            return $this->Redirect($redirectUrl);
+        }else{
+            $dbVirtualDirectories = $this->Models->VirtualDirectory->All();
+            $virtualDirectories = array();
+
+            $virtualDirectories[0] = $this->Html->SafeHtml('<root>');
+            foreach($dbVirtualDirectories as $dbVirtualDirectory){
+                $virtualDirectories[$dbVirtualDirectory->Id] = $dbVirtualDirectory->GetFullPath();
+            }
+
+            $this->Set('VirtualDirectories', $virtualDirectories);
+            $this->Set('Document', $document);
+            return $this->View();
+        }
+    }
+
+    public function EditDirectory($id = null)
+    {
+        if($id == null){
+            return $this->HttpNotFound();
+        }
+
+        $virtualDirectory = $this->Models->VirtualDirectory->Find($id);
+        if($virtualDirectory == null){
+            return $this->HttpNotFound();
+        }
+
+        if(!$this->CanEditDirectory($id)){
+            return $this->HttpNotFound();
+        }
+
+        $this->Title = 'Edit directory ' . $virtualDirectory->Name;
+
+        if($this->IsPost() && !$this->Data->IsEmpty()){
+            $virtualDirectory = $this->Data->DbParse('VirtualDirectory', $this->Models->VirtualDirectory);
+            $virtualDirectory->Save();
+
+            $redirectUrl = $virtualDirectory->GetLinkPath();
+            return $this->Redirect($redirectUrl);
+        }else{
+            $dbVirtualDirectories = $this->Models->VirtualDirectory->All();
+            $virtualDirectories = array();
+
+            $virtualDirectories[0] = $this->Html->SafeHtml('<root>');
+            foreach($dbVirtualDirectories as $dbVirtualDirectory){
+                $virtualDirectories[$dbVirtualDirectory->Id] = $dbVirtualDirectory->GetFullPath();
+            }
+
+            $this->Set('VirtualDirectories', $virtualDirectories);
+            $this->Set('VirtualDirectory', $virtualDirectory);
+            return $this->View();
+        }
+    }
+
     public function CanUploadFile()
     {
         if($this->IsLoggedIn()) {
@@ -201,6 +277,24 @@ class FilesController extends BaseController
     }
 
     public function CanCreateFolder()
+    {
+        if($this->IsLoggedIn()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function CanEditDirectory($id)
+    {
+        if($this->IsLoggedIn()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function CanEditDocument($id)
     {
         if($this->IsLoggedIn()) {
             return true;
@@ -240,7 +334,7 @@ class FilesController extends BaseController
                 return null;
             }
 
-            // Check user priviles for every directory in the file hierarchy
+            // Check user privileges for every directory in the file hierarchy
             if(!$this->CheckUserPrivileges($directory, $currentUser)) {
                 return null;
             }

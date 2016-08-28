@@ -3,11 +3,6 @@ class Document extends Model
 {
     public $TableName = 'document';
 
-    public function GetLinkPath()
-    {
-        return '/Files/Details/' . $this->GetFullPath() . '/';
-    }
-
     public function GetDownloadPath()
     {
         return '/Files/Download/' . $this->GetFullPath() . '/';
@@ -21,6 +16,16 @@ class Document extends Model
     public function GetUpdatePath()
     {
         return '/Files/Update/' . $this->Id;
+    }
+
+    public function GetDeletePath()
+    {
+        return '/Files/Update/' . $this->Id;
+    }
+
+    public function GetEditPath()
+    {
+        return '/Files/Edit/' . $this->Id;
     }
 
     public function GetFullPath()
@@ -55,5 +60,10 @@ class Document extends Model
     {
         $lastUploadedFile = $this->UploadedFiles->OrderByDescending('Id')->First();
         return $lastUploadedFile;
+    }
+
+    public function GetSearchResultContext()
+    {
+        return $this->ShortDescription;
     }
 }

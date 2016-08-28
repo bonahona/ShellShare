@@ -6,11 +6,21 @@
         <table class="table table-responsive table-striped">
             <thead>
                 <tr>
-                    <th class="col-lg-3">Filename</th>
-                    <th class="col-lg-1">&nbsp;</th>
-                    <th class="col-lg-4">Description</th>
-                    <th class="col-lg-2">Last updated</th>
-                    <th class="col-lg-2">Uploaded by</th>
+                    <?php if($this->CanEditDirectory($VirtualDirectory->Id)):?>
+                        <th class="col-lg-2">Filename</th>
+                        <th class="col-lg-1">&nbsp;</th>
+                        <th class="col-lg-3">Description</th>
+                        <th class="col-lg-2">Last updated</th>
+                        <th class="col-lg-2">Uploaded by</th>
+                        <th class="col-lg-2">&nbsp;</th>
+                    <?php else:?>
+                        <th class="col-lg-3">Filename</th>
+                        <th class="col-lg-1">&nbsp;</th>
+                        <th class="col-lg-4">Description</th>
+                        <th class="col-lg-2">Last updated</th>
+                        <th class="col-lg-2">Uploaded by</th>
+                        <th class="">&nbsp;</th>
+                    <?php endif;?>
                 </tr>
             </thead>
             <tbody>
@@ -21,6 +31,12 @@
                         <td><?php echo $document->ShortDescription;?></td>
                         <td><?php echo $document->GetLastUpdated();?></td>
                         <td><?php echo $document->GetUploadedBy();?></td>
+                        <?php if($this->CanEditDirectory($VirtualDirectory->Id)):?>
+                            <td class="">
+                                <a class="btn btn-medium btn-default" href="<?php echo $document->GetEditPath();?>"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a class="btn btn-medium btn-default" href="<?php echo $document->GetDeletePath();?>"><span class="glyphicon glyphicon-trash"></span></a>
+                            </td>
+                        <?php endif;?>
                     </tr>
                 <?php endforeach;?>
             </tbody>
@@ -42,6 +58,14 @@
     <div class="row margin-top">
         <div class="col-lg-12">
             <a href="/VirtualDirectory/Create/<?php echo $VirtualDirectory->Id;?>" class="btn btn-md btn-primary col-lg-2">Create Directory</a>
+        </div>
+    </div>
+<?php endif;?>
+
+<?php if($this->CanEditDirectory($VirtualDirectory->Id)):?>
+    <div class="row margin-top">
+        <div class="col-lg-12">
+            <a href="<?php echo $VirtualDirectory->GetEditPath();?>" class="btn btn-md btn-default col-lg-2">Edit directory</a>
         </div>
     </div>
 <?php endif;?>

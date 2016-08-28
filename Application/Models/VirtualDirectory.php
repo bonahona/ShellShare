@@ -8,6 +8,11 @@ class VirtualDirectory extends Model
         return '/Files/Details/' . $this->GetFullPath() . '/';
     }
 
+    public function GetEditPath()
+    {
+        return '/Files/EditDirectory/' . $this->Id;
+    }
+
     public function GetFullPath()
     {
         // Traverse the parent tree until a root is found
@@ -24,5 +29,10 @@ class VirtualDirectory extends Model
         $result = implode('/', $parentDirectories);
 
         return $result;
+    }
+
+    public function GetSearchResultContext()
+    {
+        return "Meep";
     }
 }

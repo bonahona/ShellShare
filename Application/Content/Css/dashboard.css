@@ -219,3 +219,16 @@ ul
     font-weight: bold;
     font-size: 1.1em;
 }
+
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:hover,
+.navbar-inverse .navbar-nav > .open > a:focus
+{
+    background-color: #154a26; !important;
+}
+
+
+.navbar-nav
+{
+    float: left; !important;
+}

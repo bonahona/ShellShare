@@ -72,20 +72,6 @@
                 <?php echo $this->PartialView('Breadcrumbs', array('BreadCrumbs' => $BreadCrumbs));?>
             <?php endif;?>
             <?php echo $view;?>
-            <div class="row margin-top">
-                <div class="panel">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Cache log</h3>
-                    </div>
-                    <div class="panel-body">
-                        <?php foreach($this->Logging->Cache->Fetch() as $logEntry):?>
-                            <div class="col-lg-12">
-                                <?php var_dump($logEntry);?>
-                            </div>
-                        <?php endforeach;?>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
