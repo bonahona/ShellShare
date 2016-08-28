@@ -7,6 +7,10 @@ class FilesController extends BaseController
         $path = $this->Parameters;
         $this->Title = end($path);
 
+        if(count($path) == 0){
+            return $this->View('DisplayRoot');
+        }
+
         $node = $this->GetNode($path, $this->GetCurrentUser());
 
         if($node == null){
