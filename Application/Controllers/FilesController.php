@@ -5,7 +5,12 @@ class FilesController extends BaseController
     public function Details()
     {
         $path = $this->Parameters;
-        $this->Title = end($path);
+
+        if(count($path) > 0) {
+            $this->Title = 'Share - ' . end($path);
+        }else{
+            $this->Title = 'Share';
+        }
 
         if(count($path) == 0){
             return $this->View('DisplayRoot');
