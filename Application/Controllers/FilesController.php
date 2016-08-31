@@ -16,7 +16,8 @@ class FilesController extends BaseController
             return $this->View('DisplayRoot');
         }
 
-        $node = $this->GetNode($path, $this->GetCurrentUser());
+        $pathResult = $this->GetNode($path, $this->GetCurrentUser());
+        $node = $pathResult['Node'];
 
         if($node == null){
             return $this->HttpNotFound();
@@ -312,20 +313,31 @@ class FilesController extends BaseController
         return false;
     }
 
-    private function GetNode($path, $currentUser)
+    private function GetNode($path)
     {
-        $virtualDirectory = $this->GetVirtualDirectory($path, $this->GetCurrentUser());
+        $directoryResult = $this->GetVirtualDirectory($path, $this->GetCurrentUser());
+        $virtualDirectory = $directoryResult['Directory'];
+        $this->SetBreadCrumbs($directoryResult['Path']);
 
         if(!$virtualDirectory == null && is_a($virtualDirectory, 'VirtualDirectory')){
-            return $virtualDirectory;
+            return array(
+                'Node' => $virtualDirectory,
+                'Path' => $directoryResult['Path']
+            );
         }
 
         if($virtualDirectory == null){
             $document = $this->GetDocument($path, $this->GetCurrentUser());
-           return $document;
+            return array(
+                'Node' => $document,
+                'Path' => $directoryResult['Path']
+            );
         }
 
-        return null;
+        return array(
+            'Node' => null,
+            'Path' => $directoryResult['Path']
+        );
     }
 
     private function GetVirtualDirectory($path, $currentUser)
@@ -337,11 +349,15 @@ class FilesController extends BaseController
         $directories = $this->Models->VirtualDirectory->Where(array('ParentDirectoryId' => null));
         $directory = null;
 
+        $directoryList = array();
+
         foreach($path as $name){
             $directory = $directories->Where(array('Name' => $name))->First();
             if($directory == null){
                 return null;
             }
+
+            $directoryList[] = $directory;
 
             // Check user privileges for every directory in the file hierarchy
             if(!$this->CheckUserPrivileges($directory, $currentUser)) {
@@ -351,7 +367,10 @@ class FilesController extends BaseController
             $directories = $directory->VirtualDirectories->Where(array('ParentDirectoryId' => $directory->Id));
         }
 
-        return $directory;
+        return array(
+            'Directory' => $directory,
+            'Path' => $directoryList
+        );
     }
 
     private function GetDocument($path, $currentUser)

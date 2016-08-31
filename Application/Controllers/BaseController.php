@@ -23,6 +23,31 @@ class BaseController extends Controller
         }
     }
 
+    protected function SetBreadCrumbs($directoryList)
+    {
+        if(!is_array($directoryList)){
+            return;
+        }
+
+        $result = array();
+
+        $rootEntry =array(
+            'Text' => htmlentities('<root>'),
+            'Link' => '/Files/Details/'
+        );
+        $result[] = $rootEntry;
+
+        foreach($directoryList as $directory) {
+            $entry = array(
+                'Text' => $directory->Name,
+                'Link' => $directory->GetLinkPath()
+            );
+            $result[] = $entry;
+        }
+
+        $this->Set('BreadCrumbs', $result);
+    }
+
     public function IsAdmin()
     {
         if($this->UserPrivileges == null){
