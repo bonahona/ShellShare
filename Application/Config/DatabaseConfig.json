@@ -5,7 +5,7 @@
     "Provider" : "mysql",
     "Server" : "127.0.0.1",
     "Database" : "share",
-    "Username" : "root",
-    "Password" : ""
+    "Username" : "share",
+    "Password" : "MWPFWcqQBUkh2G"
   }
 }

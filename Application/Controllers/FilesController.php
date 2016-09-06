@@ -38,6 +38,7 @@ class FilesController extends BaseController
     {
         $path = $this->Parameters;
         $document = $this->GetNode($path, $this->GetCurrentUser());
+		$document = $document['Node'];
 
         if(!is_a($document, 'Document')){
             return $this->HttpNotFound();
@@ -72,7 +73,8 @@ class FilesController extends BaseController
         $this->Title = end($path) . ' history';
 
         $document = $this->GetNode($path, $this->GetCurrentUser());
-
+		$document = $document['Node'];
+		
         if(!is_a($document, 'Document')){
             return $this->HttpNotFound();
         }
@@ -383,7 +385,8 @@ class FilesController extends BaseController
         $fileName = end($path);
         array_pop($path);
 
-        $parentDirectory = $this->GetVirtualDirectory($path, $currentUser);
+		$response = $this->GetVirtualDirectory($path, $currentUser);
+        $parentDirectory = $response['Directory'];
         if($parentDirectory == null){
             return null;
         }
