@@ -587,6 +587,17 @@ class Core
         }
     }
 
+    public function GetDeclaredMethods($className) {
+        $reflector = new ReflectionClass($className);
+        $methodNames = array();
+        foreach ($reflector->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            if ($method->class === $className) {
+                $methodNames[] = $method->name;
+            }
+        }
+        return $methodNames;
+    }
+
     public function CreateHandler($controllerName, $actionName, $requestData)
     {
         // Find the controller to use
@@ -620,12 +631,11 @@ class Core
             );
         }
 
-
-        $publicMethods = get_class_methods($controllerClassName);
+        $publicMethods = $this->GetDeclaredMethods($controllerClassName);
         if(!in_array($actionName, $publicMethods)){
             return array(
                 'error' => 1,
-                'message' => 'Called action is not public'
+                'message' => 'Called action is not public is does not exists'
             );
         }
 
