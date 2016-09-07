@@ -72,6 +72,17 @@
                 <?php echo $this->PartialView('Breadcrumbs', array('BreadCrumbs' => $BreadCrumbs));?>
             <?php endif;?>
             <?php echo $view;?>
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2 class="panel-title"></h2>
+                </div>
+                <div class="panel-body">
+                    <?php foreach ($this->Logging->Cache->Fetch() as $logEntry):?>
+                        <?php var_dump($logEntry);?>
+                    <?php endforeach;?>(
+                </div>
+            </div>
         </div>
     </div>
 </div>

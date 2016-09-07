@@ -1,8 +1,32 @@
 {
-  "Routes": {
-    "/Admin/":{
-      "Controller": "User",
-      "Action": "Login"
+  "Routes": [
+    {
+      "/Admin/{...}": {
+        "Controller": "User",
+        "Action": "Login",
+        "Variables": {
+        }
+      }
+    },
+    {
+      "/Files/{...}": {
+        "Controller": "Files",
+        "Action": "Details",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/{Controller}/{Action}/{...}": {
+        "Controller": "{Controller}",
+        "Action": "{Action}",
+        "Variables": "{...}"
+      }
+    }
+  ],
+  "Default": {
+    "Controller": "Files",
+    "Action": "Details",
+    "Variables": {
     }
   }
 }

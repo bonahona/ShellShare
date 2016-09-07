@@ -39,6 +39,7 @@ require_once('./ShellLib/Core/IDatabaseDriver.php');
 require_once('./ShellLib/Core/Models.php');
 require_once('./ShellLib/Core/Helpers.php');
 require_once('./ShellLib/Core/IHelper.php');
+require_once ('./ShellLib/Core/Routing.php');
 require_once('./ShellLib/Core/DatabaseWhereCondition.php');
 require_once('./ShellLib/Core/CustomObjectSorter.php');
 require_once('./ShellLib/Files/File.php');
@@ -80,6 +81,7 @@ class Core
     protected $Helpers;
     protected $ModelHelper;
     protected $RequestUrl;
+    protected $RequestString;
     protected $Database;
     protected $Controller;
 
@@ -489,9 +491,12 @@ class Core
     {
         // Find the current request folder
         $requestRoot = $_SERVER['SCRIPT_NAME'];
-        $requestUrl = $_SERVER['REQUEST_URI'];
+        $this->RequestString = $_SERVER['REQUEST_URI'];
+        $this->RequestUrl = $this->FixRequestUrl($this->RequestString);
 
-        $requestData = $this->ParseUrl($requestRoot, $requestUrl);
+        $routingEngine = new Routing($this->RoutesConfig);
+        $requestData = $routingEngine->ParseUrl($requestRoot, $this->RequestUrl);
+
         $controllerName = $requestData['ControllerName'];
         $actionName = $requestData['ActionName'];
         $variables = $requestData['Variables'];
@@ -546,6 +551,20 @@ class Core
 
         // Clean up
         $this->Database->Close();
+    }
+
+    // Takes the raw request url and makes sure it follows the expected format
+    public function FixRequestUrl($requestUrl)
+    {
+        // If there is a query part of the request url, remove it
+        if(strpos($requestUrl, '?') !== false) {
+            $requestUrl = substr($requestUrl,0,strpos($requestUrl, '?'));
+        }
+
+        // Made sure the request url is valid with a trailing slash
+        $requestUrl = rtrim($requestUrl, '/') . '/';
+
+        return $requestUrl;
     }
 
     public function GetControllerPath($controllerName, $requestData)
@@ -627,8 +646,8 @@ class Core
         $controller->Controller     = $controllerName;
         $controller->Layout         = $this->ApplicationConfig['Application']['DefaultLayout'];
         $controller->Models         = $this->Models;
-        $controller->RequestUri     = $requestData['RequestUri'];
-        $controller->RequestString  = $requestData['RequestString'];
+        $controller->RequestUri     = $this->RequestUrl;
+        $controller->RequestString  = $this->RequestString;
         $controller->Parameters     = $requestData['Variables'];
         $controller->Helpers        = $this->Helpers;
         $controller->Logging        = $this->Logging;
@@ -661,83 +680,6 @@ class Core
         $notFoundAction = $this->ApplicationConfig['Application']['NotFoundAction'];
 
         return $this->CreateHandler($notFoundControllerName, $notFoundAction, $requestData);
-    }
-
-    protected function ParseUrl($requestRoot, $requestUrl)
-    {
-        $requestString = $requestUrl;
-
-        // If there is a query part of the request url, remove it
-        if(strpos($requestUrl, '?') !== false) {
-            $requestUrl = substr($requestUrl,0,strpos($requestUrl, '?'));
-        }
-
-        // Made sure the request url is valid with a trailing slash
-        $requestUrl = rtrim($requestUrl, '/') . '/';
-
-        // First, go trough the routes in the config and see if there is a route overriding the default routing
-        foreach($this->RoutesConfig['Routes'] as $route => $routeData) {
-            if (strcasecmp($route, $requestUrl) == 0) {
-                return array(
-                    'ControllerName' => $routeData['Controller'],
-                    'ActionName' => $routeData['Action'],
-                    'Variables' => array(),
-                    'RequestUri' => $requestUrl,
-                    'RequestString' => $requestString
-
-                );
-            }
-        }
-
-        $requestPath = explode('/', $requestRoot);
-
-        // Remove only the last part of the string
-        $requestRoot = str_replace(end($requestPath), '', $requestRoot);
-
-
-        // If the request root is the root, there's nothing to clear out
-        if($requestRoot != '/') {
-            $requestResource = str_replace($requestRoot, '', $requestUrl);
-        }else{
-            $requestResource = $requestUrl;
-        }
-
-        $this->RequestUrl = $requestUrl;
-
-        $requestParameters = explode('/', $requestResource);
-
-        // Check if a specific controller has been specified
-        if(!empty($requestParameters[1])){
-            $controllerName = $requestParameters[1];
-        }else{
-            $controllerName = $this->ApplicationConfig['Application']['DefaultController'];
-        }
-
-        // Find if a specific action has been specified
-        if(!empty($requestParameters[2])){
-            $actionName = $requestParameters[2];
-        }else{
-            $actionName = $this->ApplicationConfig['Application']['DefaultAction'];
-        }
-
-        // Go through the rest of the parameters to filter out the variables
-        $variables = array();
-        foreach($requestParameters as $key => $parameter){
-            // The first 3 are not used as variables
-            if($key != 0 && $key != 1 && $key != 2){
-                if($parameter != '') {
-                    $variables[] = $parameter;
-                }
-            }
-        }
-
-        return array(
-            'ControllerName' => $controllerName,
-            'ActionName' => $actionName,
-            'Variables' => $variables,
-            'RequestUri' => $requestUrl,
-            'RequestString' => $requestString
-        );
     }
 
     function ParseData($controller)

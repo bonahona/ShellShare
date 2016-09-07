@@ -1,7 +1,5 @@
 {
   "Application": {
-    "DefaultController": "Files",
-    "DefaultAction": "Details",
     "DefaultLayout": "Default",
     "NotFoundController" : "Home",
     "NotFoundAction": "NotFound"
