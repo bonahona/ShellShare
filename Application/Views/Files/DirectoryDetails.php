@@ -49,7 +49,7 @@
 <?php if($this->CanUploadFile()):?>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
-            <a href="/Files/Upload/<?php echo $VirtualDirectory->Id;?>" class="btn btn-md btn-primary col-lg-2">Upload file</a>
+            <a href="/Upload/<?php echo $VirtualDirectory->Id;?>" class="btn btn-md btn-primary col-lg-2">Upload file</a>
         </div>
     </div>
 <?php endif;?>

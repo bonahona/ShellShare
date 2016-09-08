@@ -16,6 +16,62 @@
       }
     },
     {
+      "/EditDirectory/{...}": {
+        "Controller": "Files",
+        "Action": "EditDirectory",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/Edit/{...}": {
+        "Controller": "Files",
+        "Action": "Edit",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/Upload/{...}": {
+        "Controller": "Files",
+        "Action": "Upload",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/History/{...}": {
+        "Controller": "Files",
+        "Action": "History",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/Download/{...}": {
+        "Controller": "Files",
+        "Action": "Download",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/DownloadHistory/{...}": {
+        "Controller": "Files",
+        "Action": "DownloadHistory",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/Update/{...}": {
+        "Controller": "Files",
+        "Action": "Update",
+        "Variables": "{...}"
+      }
+    },
+    {
+      "/Download/{...}": {
+        "Controller": "Files",
+        "Action": "Download",
+        "Variables": "{...}"
+      }
+    },
+    {
       "/{Controller}/{Action}/{...}": {
         "Controller": "{Controller}",
         "Action": "{Action}",

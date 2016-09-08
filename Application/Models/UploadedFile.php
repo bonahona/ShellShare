@@ -16,7 +16,7 @@ class UploadedFile extends Model
 
     public function GetDirectDownloadLink()
     {
-        return '/Files/DownloadHistory/' . $this->Id;
+        return '/DownloadHistory/' . $this->Id;
     }
 
     public function GetLastUpdated()

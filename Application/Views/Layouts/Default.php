@@ -80,7 +80,7 @@
                 <div class="panel-body">
                     <?php foreach ($this->Logging->Cache->Fetch() as $logEntry):?>
                         <?php var_dump($logEntry);?>
-                    <?php endforeach;?>(
+                    <?php endforeach;?>
                 </div>
             </div>
         </div>

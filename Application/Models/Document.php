@@ -5,27 +5,27 @@ class Document extends Model
 
     public function GetDownloadPath()
     {
-        return '/Files/Download/' . $this->GetFullPath() . '/';
+        return '/Download/' . $this->GetFullPath() . '/';
     }
 
     public function GetHistoryPath()
     {
-        return '/Files/History/' . $this->GetFullPath() . '/';
+        return '/History/' . $this->GetFullPath() . '/';
     }
 
     public function GetUpdatePath()
     {
-        return '/Files/Update/' . $this->Id;
+        return '/Update/' . $this->Id;
     }
 
     public function GetDeletePath()
     {
-        return '/Files/Update/' . $this->Id;
+        return '/Update/' . $this->Id;
     }
 
     public function GetEditPath()
     {
-        return '/Files/Edit/' . $this->Id;
+        return '/Edit/' . $this->Id;
     }
 
     public function GetFullPath()
