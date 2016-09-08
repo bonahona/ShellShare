@@ -497,11 +497,18 @@ class Core
         $routingEngine = new Routing($this->RoutesConfig);
         $requestData = $routingEngine->ParseUrl($requestRoot, $this->RequestUrl);
 
-        $controllerName = $requestData['ControllerName'];
-        $actionName = $requestData['ActionName'];
-        $variables = $requestData['Variables'];
+        if($requestData != null) {
+            $controllerName = $requestData['ControllerName'];
+            $actionName     = $requestData['ActionName'];
+            $variables      = $requestData['Variables'];
 
-        $handler = $this->CreateHandler($controllerName, $actionName, $requestData);
+            $handler = $this->CreateHandler($controllerName, $actionName, $requestData);
+        }else{
+            $handler = array(
+                'error' => 1,
+                'message' => 'Routing engine could not map request to a configured route'
+            );
+        }
 
         // The controller or the action does not exists. If debugging is on, die and give an error, otherwise reroute to the notFound route
         if($handler['error'] == 1){
@@ -511,7 +518,7 @@ class Core
             }else{
                 $notFoundHandler = $this->CreateNotFoundHandler($requestData);
 
-                // If the not found handler, there is not much to do
+                // If the not found handler is not found or has en error, there is not much to do
                 if($notFoundHandler['error'] == 1){
                     trigger_error('NotFoundHandler: ' . $notFoundHandler['message'], E_USER_ERROR);
                 }

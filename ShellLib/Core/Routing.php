@@ -42,7 +42,7 @@ class Routing
             }
         }
 
-        return $this->GetDefaultRoute();
+        return null;
     }
 
     protected function CanHandleRequest($route, $requestInfo)
@@ -98,7 +98,7 @@ class Routing
         $variables = array();
 
         if(isset($routeDescription['Variables']['Type'])) {
-            $type = $type = $routeDescription['Variables'];
+            $type = $type = $routeDescription['Variables']['Type'];
             if ($type == VARIABLE) {
                 $value = $this->GetVariableValue($routeDescription['Variables']['Value'], $variableData);
                 if ($value != "") {
@@ -319,56 +319,7 @@ class Routing
         return $result;
     }
 
-    protected function GetRouteName($routeInfo)
-    {
+    protected function GetRouteName($routeInfo) {
         return array_keys($routeInfo)[0];
-    }
-
-    protected function GetDefaultRoute()
-    {
-        if(!isset($this->RoutingConfig['Default'])){
-            trigger_error('Missing default route in RoutingConfig', E_USER_ERROR);
-        }
-
-        return array(
-            'ControllerName' => $this->GetDefaultController(),
-            'ActionName' => $this->GetDefaultAction(),
-            'Variables' => $this->GetDefaultVariables()
-        );
-    }
-
-    public function GetDefaultController()
-    {
-        if(!isset($this->RoutingConfig['Default']['Controller'])){
-            trigger_error('Missing default controller name in RoutingConfig', E_USER_ERROR);
-        }
-
-        $controllerName = $this->RoutingConfig['Default']['Controller'];
-        return $controllerName;
-    }
-
-    public function GetDefaultAction()
-    {
-        if(!isset($this->RoutingConfig['Default']['Action'])){
-            trigger_error('Missing default action name in RoutingConfig', E_USER_ERROR);
-        }
-
-        $actionName = $this->RoutingConfig['Default']['Action'];
-
-        return $actionName;
-    }
-
-    public function GetDefaultVariables()
-    {
-        if(isset($this->RoutingConfig['Default']['Variables'])){
-            $variables = $this->RoutingConfig['Default']['Variables'];
-
-            // It must be an array
-            if(!is_array($variables)){
-                trigger_error('Default variables is not an array in RoutingConfig', E_USER_ERROR);
-            }
-        }else{
-            $variables = array();
-        }
     }
 }
