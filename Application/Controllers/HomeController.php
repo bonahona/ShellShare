@@ -20,7 +20,6 @@ class HomeController extends BaseController
         $this->Title = 'Search: ' . $searchQuery;
         $this->Set('SearchQuery', $searchQuery);
 
-        $this->Logging->Write($searchQuery);
         $results = array();
         if(!empty($searchQuery)){
             $resultItems =  $this->SearchItems($searchQuery);

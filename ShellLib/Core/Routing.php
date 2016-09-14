@@ -111,6 +111,23 @@ class Routing
                     $variables[] = $ellipsisVariable;
                 }
             }
+        }else{
+            // This route variable description has multiple entries
+            foreach($routeDescription['Variables'] as $routePathDescriptionVariable){
+                if(isset($routePathDescriptionVariable['Type'])){
+                    $type = $routePathDescriptionVariable['Type'];
+                    if($type == VARIABLE){
+                        $value = $this->GetVariableValue($routePathDescriptionVariable['Value'], $variableData);
+                        $variables[] = $value;
+                    }else if($type == VALUE){
+                        $variables[] = $routePathDescriptionVariable['Value'];
+                    }else if($type == ELLIPSIS){
+                        foreach ($variableData['EllipsisVariables'] as $ellipsisVariable) {
+                            $variables[] = $ellipsisVariable;
+                        }
+                    }
+                }
+            }
         }
         
         $result = array(
