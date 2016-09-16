@@ -28,7 +28,7 @@
                     <tr>
                         <td><?php echo $this->Html->Link($document->GetHistoryPath(), $document->GetName());?></td>
                         <td><a href="<?php echo $document->GetDownloadPath();?>" download="<?php echo $document->GetName();?>"><span class="glyphicon glyphicon-download-alt"</a></td>
-                        <td><?php echo $document->ShortDescription;?></td>
+                        <td><?php echo $document->GetShortDesciption();?></td>
                         <td><?php echo $document->GetLastUpdated();?></td>
                         <td><?php echo $document->GetUploadedBy();?></td>
                         <?php if($this->CanEditDirectory($VirtualDirectory->Id)):?>

@@ -62,8 +62,19 @@ class Document extends Model
         return $lastUploadedFile;
     }
 
+    public function GetShortDesciption($maxLength = 30)
+    {
+        $textLength = strlen($this->ShortDescription);
+        if($textLength <= $maxLength){
+            return $this->ShortDesciption;
+        }else{
+            $subString = substr($this->ShortDescription, 0, $maxLength) . '...';
+            return $subString;
+        }
+    }
+
     public function GetSearchResultContext()
     {
-        return $this->ShortDescription;
+        return $this->GetShortDesciption(50);
     }
 }
