@@ -3,6 +3,11 @@ class VirtualDirectory extends Model
 {
     public $TableName = 'virtualdirectory';
 
+    public function OnSave()
+    {
+        $this->NavigationName = strtolower($this->Name);
+    }
+
     public function GetLinkPath()
     {
         return '/Files/' . $this->GetFullPath() . '/';
@@ -20,7 +25,7 @@ class VirtualDirectory extends Model
         $currentFolder = $this;
 
         while($currentFolder != null){
-            $parentDirectories[] = $currentFolder->Name;
+            $parentDirectories[] = $currentFolder->NavigationName;
             $currentFolder = $currentFolder->ParentDirectory;
         }
 

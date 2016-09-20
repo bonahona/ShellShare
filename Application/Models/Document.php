@@ -3,6 +3,11 @@ class Document extends Model
 {
     public $TableName = 'document';
 
+    public function OnSave()
+    {
+        $this->NavigationName = strtolower($this->Name);
+    }
+
     public function GetDownloadPath()
     {
         return '/Download/' . $this->GetFullPath() . '/';
@@ -30,7 +35,7 @@ class Document extends Model
 
     public function GetFullPath()
     {
-        return $this->Directory->GetFullPath() . '/' . $this->Name;
+        return $this->Directory->GetFullPath() . '/' . $this->NavigationName;
     }
 
     public function GetName()

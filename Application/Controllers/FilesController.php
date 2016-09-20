@@ -354,7 +354,7 @@ class FilesController extends BaseController
         $directoryList = array();
 
         foreach($path as $name){
-            $directory = $directories->Where(array('Name' => $name))->First();
+            $directory = $directories->Where(array('NavigationName' => $name))->First();
             if($directory == null){
                 return null;
             }
@@ -391,7 +391,7 @@ class FilesController extends BaseController
             return null;
         }
 
-        $document = $parentDirectory->Documents->Where(array('Name' => $fileName))->First();
+        $document = $parentDirectory->Documents->Where(array('NavigationName' => $fileName))->First();
         return $document;
     }
 
