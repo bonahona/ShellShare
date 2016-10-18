@@ -31,6 +31,7 @@ define('JS_FILE_ENDING', '.js');
 define('CORE_CLASS', 'Core');
 
 require_once('./ShellLib/Core/ConfigParser.php');
+require_once('./ShellLib/Caching/Caching.php');
 require_once('./ShellLib/Core/Controller.php');
 require_once('./ShellLib/Core/ModelProxy.php');
 require_once('./ShellLib/Core/ModelProxyCollection.php');
@@ -44,7 +45,6 @@ require_once('./ShellLib/Core/DatabaseWhereCondition.php');
 require_once('./ShellLib/Core/CustomObjectSorter.php');
 require_once('./ShellLib/Files/File.php');
 require_once('./ShellLib/Logging/Logging.php');
-require_once('./ShellLib/Core/Caching.php');
 require_once('./ShellLib/Helpers/DirectoryHelper.php');
 require_once('./ShellLib/Helpers/ModelHelper.php');
 require_once('./ShellLib/Helpers/UrlHelper.php');
