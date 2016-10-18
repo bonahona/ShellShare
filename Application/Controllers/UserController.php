@@ -21,6 +21,12 @@ class UserController extends BaseController
         if($this->IsPost()) {
             $user = $this->Data->RawParse('User');
 
+
+            // Validate nonce for CSRFs
+            if(!$this->ValidateNonce('User')){
+                $this->ModelValidation->AddError('User', 'Password', 'Failed to handle request');
+            }
+            
             $response = $this->Helpers->ShellAuth->Login($user['Username'], $user['Password']);
 
             if($response['Error'] != 0){

@@ -1,4 +1,5 @@
 <?php echo $this->Form->Start('User', array('attributes' => array('class' => 'form-signin')));?>
+    <?php echo $this->Form->Nonce();?>
     <h2 class="form-signin-heading">Please sign in</h2>
     <label for="Username" class="sr-only">Email address</label>
     <?php echo $this->Form->Input('Username', array('attributes' => array('class' => 'form-control', 'placeholder' => 'Username', 'required' => 'true', 'autofocus' => 'true')));?>
