@@ -821,7 +821,7 @@ class Core
     public function UpdateNonces()
     {
         if(!isset($_SESSION['Nonces'])){
-            $_SESSION['Engine']['Nonces'] = array();
+            $_SESSION['Nonces'] = array();
         }
 
         foreach($_SESSION['Nonces'] as $key => $nonce){
