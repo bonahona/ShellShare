@@ -213,4 +213,9 @@ class Model
             }
         }
     }
+
+    public function GetDescription()
+    {
+        return $this->ModelCollection;
+    }
 }

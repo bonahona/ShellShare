@@ -54,8 +54,6 @@ class Controller
     /* @var Cache */
     public $Cache;                      // Reference to the Core's cache object
 
-    // Data sent
-
     /* @var DataHelper */
     public $Post;                       // Stores all Post data variables sent in
 
@@ -79,6 +77,9 @@ class Controller
 
     /* @var array */
     public $Nonces = array();           // Nonce values fetched from the post data
+
+    /* @var Scaffolding */
+    public $Scaffolding;
 
     // Response data
     public $ReturnCode;
@@ -104,6 +105,7 @@ class Controller
         $this->Data = new DataHelper();
         $this->Files = new DataHelper();
         $this->Session = new SessionHelper();
+        $this->Scaffolding = new Scaffolding($this, $this->Form);
     }
 
     public  function GetCore()

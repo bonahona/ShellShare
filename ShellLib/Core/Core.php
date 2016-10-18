@@ -56,6 +56,7 @@ require_once('./ShellLib/Helpers/SessionHelper.php');
 require_once('./ShellLib/Helpers/HtmlHelper.php');
 require_once('./ShellLib/Utility/StringUtilities.php');
 require_once('./ShellLib/Utility/ArrayUtilities.php');
+require_once('./ShellLib/Scaffolding/Scaffolding.php');
 
 require_once('./ShellLib/Collections/ICollection.php');
 require_once('./ShellLib/Collections/IDataCollection.php');
