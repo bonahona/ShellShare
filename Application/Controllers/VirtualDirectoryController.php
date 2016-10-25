@@ -1,6 +1,6 @@
 <?php
 require_once('BaseController.php');
-class VirtualDirectoryController extends BaseController
+class VirtualdirectoryController extends BaseController
 {
     public function Create($parentDirectoryId = null)
     {
