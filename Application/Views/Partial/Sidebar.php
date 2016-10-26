@@ -34,7 +34,7 @@ function PrintBranch($directories, $controller)
                     <li folder-link="/" class="branch">
                         <span>
                             <i class="indicator glyphicon glyphicon-folder-open"></i>
-                            <a href="/Files/Details/"><?php echo $this->Html->SafeHtml('<root>');?></a>
+                            <a href="/Files/"><?php echo $this->Html->SafeHtml('<root>');?></a>
                         </span>
                         <ul>
                             <li>
