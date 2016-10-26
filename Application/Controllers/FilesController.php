@@ -399,4 +399,18 @@ class FilesController extends BaseController
     {
         return true;
     }
+
+    protected  function IsImageFile($fileName)
+    {
+        $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+
+        $allowedFileExtensions = array(
+            'jpg',
+            'png',
+            'bmp',
+            'gif'
+        );
+
+        return in_array($fileExtension, $allowedFileExtensions);
+    }
 }
