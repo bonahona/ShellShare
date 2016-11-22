@@ -162,6 +162,10 @@ class Controller
     // Different ways to render something
     protected function View($viewName = null){
 
+        $result = new HttpResult();
+        $result->ReturnCode = $this->ReturnCode;
+        $result->MimeType = $this->MimeType;
+
         if($viewName == null){
             $viewName = $this->Action;
         }
@@ -187,8 +191,8 @@ class Controller
         $layouts = $this->GetLayoutPaths();
 
         if(empty($layouts)){
-            echo $view;
-            return;
+            $result->Content = $view;
+            return $result;
         }
 
         // Go through the layout candidate files in order and make sure they exists. The first match will act as the layout for this view
@@ -202,40 +206,64 @@ class Controller
         }
 
         if($foundLayout == null){
-            echo $view;
+            $result->Content = $view;
         }else{
             $this->CurrentCore = $foundLayout['core'];
+            ob_start();
             include($foundLayout['layout']);
+            $layoutView = ob_get_clean();
             $this->CurrentCore = $this->Core;
+
+            $result->Content = $layoutView;
         }
+
+        return $result;
     }
 
     protected function Json($data){
-        header('Content-Type: application/json');
-        echo json_encode($data);
+        $result = new HttpResult();
+        $result->MimeType = 'application/json';
+        $result->Content = json_encode($data);
+
+        return $result;
+    }
+
+    protected function Text($text)
+    {
+        $result = new HttpResult();
+        $result->MimeType = 'text/plain';
+        $result->Content = $text;
+
+        return $result;
     }
 
     protected function Redirect($url, $vars = null, $code = 301){
+
+        $locationString = '';
         if($vars != null){
             $queryParts = array();
             foreach($vars as $key => $value){
                 $queryParts[] = "$key=$value";
                 $queryString = implode(',', $queryParts);
-                header('Location:' . Url($url . '?' . $queryString), true, $code);
+                $locationString = Url($url . '?' . $queryString);
             }
         }else {
-            header('Location: ' . Url($url), true, $code);
+            $locationString =  Url($url);
         }
-        exit;
-    }
 
-    protected function SetType($type){
-        header('Content-Type: ' . $type);
+        $result = new HttpResult();
+        $result->Location = $locationString;
+        $result->ReturnCode = $code;
+
+        return $result;
     }
 
     protected function HttpStatus($statusCode)
     {
-        $this->ReturnCode = $statusCode;
+        $result = new HttpResult();
+        $result->ReturnCode = $statusCode;
+
+        return $result;
     }
 
     function HttpNotFound()
@@ -322,7 +350,6 @@ class Controller
 
     // Function is called after the action but before the page is rendered
     protected function BeforeRender(){
-        header('Content-Type: ' . $this->MimeType);
     }
 
     // Adds a request identifier to the list of cached output for automatic output cache handling

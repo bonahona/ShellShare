@@ -32,6 +32,7 @@ define('CORE_CLASS', 'Core');
 
 require_once('./ShellLib/Core/ConfigParser.php');
 require_once('./ShellLib/Core/Controller.php');
+require_once('./ShellLib/Core/HttpResult.php');
 require_once('./ShellLib/Core/ModelProxy.php');
 require_once('./ShellLib/Core/ModelProxyCollection.php');
 require_once('./ShellLib/Core/Model.php');
@@ -532,17 +533,18 @@ class Core
 
         $this->ParseData($controller);
 
-        // Call the action
+        // Call the action and validate its result
         $controller->BeforeAction();
-        call_user_func_array(array($controller, $actionName), $variables);
+        $httpResult = call_user_func_array(array($controller, $actionName), $variables);
 
-        // Set data based on the call
-        if(function_exists('http_response_code')) {
-            http_response_code($controller->ReturnCode);
+        if($httpResult == null){
+            trigger_error('Called action ' . $controllerName . '->' . $actionName . ' does return null', E_USER_ERROR);
+        } else if(!is_a($httpResult, 'HttpResult')){
+            trigger_error('Called action ' . $controllerName . '->' . $actionName . ' does not resturn a HttpResult object', E_USER_ERROR);
         }
 
         // 404 errors use the notFound route specified in the application config
-        if($controller->ReturnCode === 404){
+        if($httpResult->ReturnCode === 404){
             $notFoundHandler = $this->CreateNotFoundHandler($requestData);
 
             if($notFoundHandler['error'] == 1) {
@@ -552,12 +554,32 @@ class Core
                 $notFoundAction = $notFoundHandler['actionName'];
 
                 $controller->BeforeAction();
-                call_user_func_array(array($notFoundController, $notFoundAction), array());
+                $httpResult = call_user_func_array(array($notFoundController, $notFoundAction), array());
             }
         }
 
+        $this->DisplayResult($httpResult);
+
         // Clean up
         $this->Database->Close();
+    }
+
+    public  function DisplayResult($httpResult)
+    {
+        // Redirects needs to be handled first
+        if($httpResult->Location != null){
+            header('Location: ' . $httpResult->Location, true, $httpResult->ReturnCode);
+        }
+
+        // Set the HTTP return code (Default 200 = HTTP_OK)
+        if(function_exists('http_response_code')) {
+            http_response_code($httpResult->ReturnCode);
+        }
+
+        // Set the mime type of the request (Default is text/plain, standard for webpages are text/html and for json its application/json
+        header('Content-Type: ' . $httpResult->MimeType);
+
+        echo $httpResult->Content;
     }
 
     // Takes the raw request url and makes sure it follows the expected format
