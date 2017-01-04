@@ -1,7 +1,7 @@
 <?php
 
-define('DEFAULT_MIME_TYPE', 'text/html');
-define('DEFAULT_RETURN_CODE', '200');
+const DEFAULT_MIME_TYPE = 'text/html';
+const DEFAULT_RETURN_CODE = '200';
 
 class Controller
 {

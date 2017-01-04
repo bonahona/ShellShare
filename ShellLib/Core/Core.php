@@ -1,34 +1,35 @@
 <?php
 define('SERVER_ROOT', str_ireplace('/Index.php', '', $_SERVER['PHP_SELF']));
 define('APPLICATION_ROOT',          $_SERVER['DOCUMENT_ROOT']);
-define('APPLICATION_FOLDER',        '/Application');
-define('CONFIG_FOLDER',             '/Config/');
-define('CONTROLLER_FOLDER',         '/Controllers/');
-define('MODELS_FOLDER',             '/Models/');
-define('PLUGINS_FOLDER',            '/Plugins/');
-define('HELPERS_FOLDER',            '/Helpers/');
-define('VIEWS_FOLDER',              '/Views/');
-define('PARTIAL_FOLDER',            '/Views/Partial/');
-define('LAYOUTS_FOLDER',            '/Views/Layouts');
-define('MODEL_CACHE_FOLDER',        '/Application/Temp/Cache/Models/');
-define('VIEW_CACHE_FOLDER',     '/Application/Temp/Cache/Views/');
-define('CSS_FOLDER',                '/Content/Css/');
-define('JS_FOLDER',                 '/Content/Js/');
-define('IMAGE_FOLDER',              '/Content/Images/');
-define('DATABASE_DRIVER_FOLDER',    './ShellLib/DatabaseDrivers/');
-define('LOGGER_FOLDER',             '/Loggers/');
-define('SHELL_LIB_LOGGERS_FOLDER',  '/ShellLib/Loggers/');
-define('OUTPUT_CACHE_FOLDER',       '/OutputCaches/');
-define('SHELL_LIB_OUTPUT_CACHE_FOLDER','/ShellLib/OutputCaches/');
 
-define('VIEW_FILE_ENDING', '.php');
-define('MODEL_CACHE_FILE_ENDING', '.model');
-define('OUTPUT_CACHE_FILE_ENDING', '.output');
-define('PHP_FILE_ENDING', '.php');
-define('CSS_FILE_ENDING', '.css');
-define('JS_FILE_ENDING', '.js');
+const APPLICATION_FOLDER =          '/Application';
+const CONFIG_FOLDER =               '/Config/';
+const CONTROLLER_FOLDER =           '/Controllers/';
+const MODELS_FOLDER =               '/Models/';
+const PLUGINS_FOLDER =              '/Plugins/';
+const HELPERS_FOLDER =              '/Helpers/';
+const VIEWS_FOLDER =                '/Views/';
+const PARTIAL_FOLDER =              '/Views/Partial/';
+const LAYOUTS_FOLDER =              '/Views/Layouts';
+const MODEL_CACHE_FOLDER =          '/Application/Temp/Cache/Models/';
+const VIEW_CACHE_FOLDER =           '/Application/Temp/Cache/Views/';
+const CSS_FOLDER =                  '/Content/Css/';
+const JS_FOLDER =                   '/Content/Js/';
+const IMAGE_FOLDER =                '/Content/Images/';
+const DATABASE_DRIVER_FOLDER =      './ShellLib/DatabaseDrivers/';
+const LOGGER_FOLDER =               '/Loggers/';
+const SHELL_LIB_LOGGERS_FOLDER =    '/ShellLib/Loggers/';
+const OUTPUT_CACHE_FOLDER =         '/OutputCaches/';
+const SHELL_LIB_OUTPUT_CACHE_FOLDER = '/ShellLib/OutputCaches/';
 
-define('CORE_CLASS', 'Core');
+const VIEW_FILE_ENDING =            '.php';
+const MODEL_CACHE_FILE_ENDING =     '.model';
+const OUTPUT_CACHE_FILE_ENDING =    '.output';
+const PHP_FILE_ENDING =             '.php';
+const CSS_FILE_ENDING =             '.css';
+const JS_FILE_ENDING =              '.js';
+
+const CORE_CLASS =                  'Core';
 
 require_once('./ShellLib/Core/ConfigParser.php');
 require_once('./ShellLib/Core/Controller.php');
