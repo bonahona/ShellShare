@@ -33,7 +33,7 @@
                                 <a href="<?php echo $document->GetDownloadPath();?>"><span class=" glyphicon glyphicon-chevron-right"</span></a>
                             <?php endif;?>
                         </td>
-                        <td><?php echo $document->GetShortDesciption();?></td>
+                        <td><?php echo $document->GetShortDescription();?></td>
                         <td><?php echo $document->GetLastUpdated();?></td>
                         <td><?php echo $document->GetUploadedBy();?></td>
                         <?php if($this->CanEditDirectory($VirtualDirectory->Id)):?>
