@@ -66,4 +66,13 @@ class Document extends Model
     {
         return $this->ShortDescription;
     }
+
+    public function GetShortDescription()
+    {
+        if(strlen($this->ShortDescription) > 50){
+            return substr($this->ShortDescription, 0, 50);
+        }else{
+            return $this->ShortDescription;
+        }
+    }
 }
