@@ -11,20 +11,20 @@
         </div>
     </div>
 
-    <?php foreach($Results as $result):?>
+    <?php foreach($Results as $searchResult):?>
         <div class="row">
             <div class="col-lg-12">
-                <a href="<?php echo $result['Link'];?>">
-                    <h3 class="no-margin-bottom"><?php echo $result['Header'];?></h3>
+                <a href="<?php echo $searchResult['Link'];?>">
+                    <h3 class="no-margin-bottom"><?php echo $searchResult['Header'];?></h3>
                 </a>
             </div>
             <div class="col-lg-12">
             <span class="light-grey">
-                <?php echo $result['Link'];?>
+                <?php echo $searchResult['Link'];?>
             </span>
             </div>
             <div class="col-lg-6">
-                <?php echo strip_tags($result['Context']);?>
+                <?php echo strip_tags($searchResult['Context']);?>
             </div>
         </div>
     <?php endforeach;?>
