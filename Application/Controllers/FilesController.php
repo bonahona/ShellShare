@@ -46,9 +46,15 @@ class FilesController extends BaseController
 
         $uploadedFile = $document->GetCurrentFile();
 
-        header('Content-Type: ' . $uploadedFile->MimeType);
-        $content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
-        echo $content;
+        if(!file_exists($uploadedFile->LocalFilePath)){
+            return $this->HttpNotFound();
+        }
+
+        $response = new HttpResult();
+        $response->Content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
+        $response->MimeType = $uploadedFile->MimeType;
+
+        return $response;
     }
 
     public function DownloadHistory($uploadedFileId = null)
@@ -62,9 +68,15 @@ class FilesController extends BaseController
             return $this->HttpNotFound();
         }
 
-        header('Content-Type: ' . $uploadedFile->MimeType);
-        $content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
-        echo $content;
+        if(!file_exists($uploadedFile->LocalFilePath)){
+            return $this->HttpNotFound();
+        }
+
+        $response = new HttpResult();
+        $response->Content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
+        $response->MimeType = $uploadedFile->MimeType;
+
+        return $response;
     }
 
     public function History()
