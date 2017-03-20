@@ -45,11 +45,7 @@ class FilesController extends BaseController
         }
 
         $uploadedFile = $document->GetCurrentFile();
-
-        if(!file_exists($uploadedFile->LocalFilePath)){
-            return $this->HttpNotFound();
-        }
-
+        
         $response = new HttpResult();
         $response->Content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
         $response->MimeType = $uploadedFile->MimeType;
@@ -65,10 +61,6 @@ class FilesController extends BaseController
 
         $uploadedFile = $this->Models->UploadedFile->Find($uploadedFileId);
         if($uploadedFile == null){
-            return $this->HttpNotFound();
-        }
-
-        if(!file_exists($uploadedFile->LocalFilePath)){
             return $this->HttpNotFound();
         }
 
