@@ -19,8 +19,8 @@ const IMAGE_FOLDER =                '/Content/Images/';
 const DATABASE_DRIVER_FOLDER =      './ShellLib/DatabaseDrivers/';
 const LOGGER_FOLDER =               '/Loggers/';
 const SHELL_LIB_LOGGERS_FOLDER =    '/ShellLib/Loggers/';
-const OUTPUT_CACHE_FOLDER =         '/OutputCaches/';
-const SHELL_LIB_OUTPUT_CACHE_FOLDER = '/ShellLib/OutputCaches/';
+const SHELL_LIB_CACHE_FOLDER =      './ShellLib/Caching/';
+const SHELL_LIB_OUTPUT_CACHE_FOLDER='/ShellLib/OutputCaches/';
 
 const VIEW_FILE_ENDING =            '.php';
 const MODEL_CACHE_FILE_ENDING =     '.model';
@@ -31,40 +31,12 @@ const JS_FILE_ENDING =              '.js';
 
 const CORE_CLASS =                  'Core';
 
+// The only classes always needed are these. The rest are loaded on demand
 require_once('./ShellLib/Core/ConfigParser.php');
-require_once('./ShellLib/Core/Controller.php');
+require_once('./ShellLib/Core/Routing.php');
 require_once('./ShellLib/Core/HttpResult.php');
-require_once('./ShellLib/Core/ModelProxy.php');
-require_once('./ShellLib/Core/ModelProxyCollection.php');
-require_once('./ShellLib/Core/Model.php');
-require_once('./ShellLib/Core/IDatabaseDriver.php');
-require_once('./ShellLib/Core/Models.php');
-require_once('./ShellLib/Core/Helpers.php');
-require_once('./ShellLib/Core/IHelper.php');
-require_once ('./ShellLib/Core/Routing.php');
-require_once('./ShellLib/Core/DatabaseWhereCondition.php');
-require_once('./ShellLib/Core/CustomObjectSorter.php');
-require_once('./ShellLib/Files/File.php');
-require_once('./ShellLib/Logging/Logging.php');
-require_once('./ShellLib/Core/Caching.php');
-require_once('./ShellLib/Helpers/DirectoryHelper.php');
-require_once('./ShellLib/Helpers/ModelHelper.php');
-require_once('./ShellLib/Helpers/UrlHelper.php');
-require_once('./ShellLib/Helpers/ArrayHelper.php');
-require_once('./ShellLib/Helpers/FormHelper.php');
-require_once('./ShellLib/Helpers/ModelValidationHelper.php');
-require_once('./ShellLib/Helpers/DataHelper.php');
-require_once('./ShellLib/Helpers/SessionHelper.php');
-require_once('./ShellLib/Helpers/HtmlHelper.php');
-require_once('./ShellLib/Utility/StringUtilities.php');
-require_once('./ShellLib/Utility/ArrayUtilities.php');
-
-require_once('./ShellLib/Collections/ICollection.php');
-require_once('./ShellLib/Collections/IDataCollection.php');
-require_once('./ShellLib/Collections/Collection.php');
-require_once('./ShellLib/Collections/ModelCollection.php');
-require_once('./ShellLib/Collections/SqlCollection.php');
-
+require_once('./ShellLib/Helpers/CoreHelper.php');
+require_once('./ShellLib/Caching/Caching.php');
 
 // External reference to the core instance
 class Core
@@ -220,39 +192,79 @@ class Core
 
     // Creates the core object that is used for the application and any plugins that are included
     // SubPath is used when a plugin is created where the path supplied points out the relative path to the plugin (For model and controller inclusions
+    // Creates the core object that is used for the application and any plugins that are included
+    // SubPath is used when a plugin is created where the path supplied points out the relative path to the plugin (For model and controller inclusions
     function __construct($subPath = null, $primaryCore = null)
     {
-        if($subPath == null){
+        if ($subPath == null) {
             $this->IsPrimaryCore = true;
             self::$Instance = $this;
             $this->PrimaryCore = $this;
 
+            $this->SetupPreRequestFolder();
+
+            if (!$this->ReadConfig()) {
+                trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
+                trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
+            }
+
+            $this->PluginPath = '';
+            $this->CreatePlugins();
+            $this->SetupCaching();
+        } else {
+            $this->IsPrimaryCore = false;
+            $this->PluginPath = $subPath;
+            $this->PrimaryCore = $primaryCore;
+
+            $this->SetupPluginConfigFolder();
+        }
+    }
+
+    public function LoadCodeBase()
+    {
+        require_once('./ShellLib/Core/Controller.php');
+        require_once('./ShellLib/Core/ModelProxy.php');
+        require_once('./ShellLib/Core/ModelProxyCollection.php');
+        require_once('./ShellLib/Core/Model.php');
+        require_once('./ShellLib/Core/IDatabaseDriver.php');
+        require_once('./ShellLib/Core/Models.php');
+        require_once('./ShellLib/Core/Helpers.php');
+        require_once('./ShellLib/Core/IHelper.php');
+        require_once('./ShellLib/Core/DatabaseWhereCondition.php');
+        require_once('./ShellLib/Core/CustomObjectSorter.php');
+        require_once('./ShellLib/Files/File.php');
+        require_once('./ShellLib/Logging/Logging.php');
+        require_once('./ShellLib/Helpers/ModelHelper.php');
+        require_once('./ShellLib/Helpers/UrlHelper.php');
+        require_once('./ShellLib/Helpers/FormHelper.php');
+        require_once('./ShellLib/Helpers/ModelValidationHelper.php');
+        require_once('./ShellLib/Helpers/DataHelper.php');
+        require_once('./ShellLib/Helpers/SessionHelper.php');
+        require_once('./ShellLib/Helpers/HtmlHelper.php');
+
+        require_once('./ShellLib/Collections/ICollection.php');
+        require_once('./ShellLib/Collections/IDataCollection.php');
+        require_once('./ShellLib/Collections/Collection.php');
+        require_once('./ShellLib/Collections/ModelCollection.php');
+        require_once('./ShellLib/Collections/SqlCollection.php');
+    }
+
+    function SetupCore($subPath = null, $primaryCore = null)
+    {
+        if($subPath == null){
             $this->ModelCache = array();
             $this->ModelHelper = new ModelHelper();
-
-            $this->SetupFolders();
-
-            if(!$this->ReadConfig()){
-                trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
-            }
 
             // Logging
             $this->Logging = new Logging();
             $this->FindShellLibLoggers();
             $this->FindLoggers($this->LoggerFolder);
 
-            // Caching
-            $this->Caching = new Caching();
-
             $this->Helpers = new Helpers();
             $this->SetupHelpers();
             $this->SetupLogs();
             $this->SetupDatabase();
             $this->CacheModels();
-
-            $this->PluginPath = '';
-            $this->SetupPlugins();
-
         }else{
             $this->IsPrimaryCore = false;
             $this->PluginPath = $subPath;
@@ -271,12 +283,16 @@ class Core
             $this->Helpers = $primaryCore->GetHelpers();
             $this->SetupHelpers();
         }
+    }
 
-        // We are now sure all models have been loaded and all plugins initialized
-        if($subPath == null) {
-            $this->UpdateModelReferences();
-            $this->SetupModels();
-        }
+    protected  function SetupPreRequestFolder()
+    {
+        $this->ConfigFolder = APPLICATION_FOLDER . CONFIG_FOLDER;
+    }
+
+    protected  function SetupPluginConfigFolder()
+    {
+        $this->ConfigFolder = $this->PluginPath . CONFIG_FOLDER;
     }
 
     protected function SetupFolders()
@@ -341,6 +357,30 @@ class Core
     {
         if(!$this->Logging->SetupLoggers($this->ApplicationConfig)){
             trigger_error("Failed to setup logging", E_USER_ERROR);
+        }
+    }
+
+    protected function SetupCaching()
+    {
+        $this->Caching = new Caching();
+
+        foreach($this->ApplicationConfig['Caching'] as $type => $caching){
+
+            $cacheTypeFileName = SHELL_LIB_CACHE_FOLDER . $type . PHP_FILE_ENDING;
+            if(!file_exists($cacheTypeFileName)){
+                trigger_error('Failed to find cache file ' . $cacheTypeFileName, E_USER_ERROR);
+                continue;
+            }
+
+            require_once($cacheTypeFileName);
+            if(!class_exists($type)){
+                trigger_error('Missing output cache class ' . $type);
+                continue;
+            }
+
+            $name = $caching['Name'];
+            $outputCache = new $type($caching);
+            $this->Caching->AddCaching($name, $outputCache);
         }
     }
 
@@ -441,6 +481,7 @@ class Core
         }
 
         $modelHelper = Core::$Instance->GetModelHelper();
+
         $modelFiles = GetAllFiles($modelCacheFolder);
         foreach($modelFiles as $modelFile){
             $cacheFile = $modelHelper->GetModelFilePath($modelFile);
@@ -454,6 +495,8 @@ class Core
 
     protected function SetupModels()
     {
+        $this->UpdateModelReferences();
+
         $this->Models = new Models();
         $this->Models->Setup($this->ModelCache);
     }
@@ -498,6 +541,33 @@ class Core
 
         $routingEngine = new Routing($this->RoutesConfig);
         $requestData = $routingEngine->ParseUrl($requestRoot, $this->RequestUrl);
+
+        // Check if a cache entry is present and if that is so, just return it and don't put up the rest of the application
+        if ($this->Caching->CacheExists()) {
+            $caching = $this->Caching->GetFirstCache();
+
+            if ($caching->IsCached($requestData)) {
+                $this->ReturnCachedRequest($requestData);
+                return;
+            }
+        }
+
+        $this->ReturnNonCachedRequest($requestData);
+    }
+
+    public function ReturnCachedRequest($requestData)
+    {
+
+    }
+
+    public function ReturnNonCachedRequest($requestData)
+    {
+        // Now we need to setup the rest of the application
+        $this->LoadCodeBase();
+        $this->SetupFolders();
+        $this->SetupCore('', $this);
+        $this->SetupPlugins();
+        $this->SetupModels();
 
         if($requestData != null) {
             $controllerName = $requestData['ControllerName'];
@@ -800,7 +870,7 @@ class Core
         }
     }
 
-    public function SetupPlugins()
+    public function CreatePlugins()
     {
         $this->Plugins = array();
         $pluginFolder = Directory(PLUGINS_FOLDER);
@@ -810,6 +880,13 @@ class Core
         foreach(GetAllDirectories($pluginFolder) as $plugin){
             $pluginCore = new Core(PLUGINS_FOLDER . $plugin, $this);
             $this->Plugins[] = $pluginCore;
+        }
+    }
+
+    public function SetupPlugins()
+    {
+        foreach($this->Plugins as $plugin){
+            $plugin->SetupCore($plugin->PluginPath, $this);
         }
     }
 }

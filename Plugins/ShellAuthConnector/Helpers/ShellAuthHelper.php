@@ -115,7 +115,6 @@ class ShellAuthHelper implements  IHelper
             $userId = $response['Data']['User']['Id'];
             if(!$this->Controller->Models->LocalUser->Any(array('ShellUserId' => $userId))){
                 $localUser = $this->Controller->Models->LocalUser->Create(array('ShellUserId' => $userId));
-                var_dump($localUser);
                 $localUser->Save();
             }
         }
