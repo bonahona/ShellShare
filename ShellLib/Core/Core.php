@@ -546,18 +546,14 @@ class Core
         if ($this->Caching->CacheExists()) {
             $caching = $this->Caching->GetFirstCache();
 
-            if ($caching->IsCached($requestData)) {
-                $this->ReturnCachedRequest($requestData);
+            $cacheResult = $caching->GetCache($requestData);
+            if($cacheResult != null) {
+                $this->DisplayResult($cacheResult);
                 return;
             }
         }
 
         $this->ReturnNonCachedRequest($requestData);
-    }
-
-    public function ReturnCachedRequest($requestData)
-    {
-
     }
 
     public function ReturnNonCachedRequest($requestData)
@@ -631,8 +627,19 @@ class Core
 
         $this->DisplayResult($httpResult);
 
+        $this->CacheResult($requestData, $httpResult);
+
         // Clean up
-        $this->Database->Close();
+        if($this->Database != null && $this->Database != false) {
+            $this->Database->Close();
+        }
+    }
+
+    public function CacheResult($request, $httpResult)
+    {
+        if($this->Caching->CacheExists($request)){
+            $this->Caching->GetFirstCache()->CacheOutput($request, $httpResult);
+        }
     }
 
     public  function DisplayResult($httpResult)

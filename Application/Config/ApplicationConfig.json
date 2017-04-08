@@ -19,11 +19,10 @@
     ]
   },
   "Caching": {
-    "MemcachedOutputCache": {
+    "FileOutputCache": {
       "Name": "OutputCache",
-      "ServerHost": "127.0.0.1",
-      "ServerPort": 11211,
-      "StorageTime": 10
+      "CacheFolder": "/Temp/Cache/Output/",
+      "StorageTime": 900
     }
   }
 }
