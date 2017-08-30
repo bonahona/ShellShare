@@ -105,7 +105,7 @@ class FilesController extends BaseController
             $fileExtension = $file->GetFileExtension();
 
             if(!is_dir($directory)){
-                mkdir($directory, 777, true);
+                mkdir($directory, 0777, true);
             }
 
             $completePath = $directory . $fileName . '.' . $fileExtension;
@@ -175,7 +175,7 @@ class FilesController extends BaseController
             $fileExtension = $file->GetFileExtension();
 
             if(!is_dir($directory)){
-                mkdir($directory, 777, true);
+                mkdir($directory, 0777, true);
             }
 
             $completePath = $directory . $fileName . '.' . $fileExtension;
