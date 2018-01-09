@@ -1,4 +1,4 @@
 echo off
-php %~dp0../Common/ClearCache.php
+php %~dp0../Common/ClearCache.php %cd%
 
 echo on

@@ -3,9 +3,9 @@
     "UseDatabase": true,
     "DatabaseType" : "PDO",
     "Provider" : "mysql",
-    "Server" : "127.0.0.1",
+    "Server" : "share-mysql",
     "Database" : "share",
     "Username" : "root",
-    "Password" : ""
+    "Password" : "H3mligt"
   }
 }

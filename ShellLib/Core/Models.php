@@ -69,7 +69,9 @@ class Models
             }
         }
 
-        if($tableName === ''){
+        if($tableName === null){
+            $tableName = '[null]';
+        }else if($tableName === ''){
             $tableName = '[Empty]';
         }
 

@@ -1,15 +1,11 @@
 <?php
-require_once('/../../ShellLib/Core/ScriptCore.php');
-class ClearCacheCore extends ScriptCore
+require_once('/../../ShellLib/Core/Core.php');
+class ClearCacheCore extends Core
 {
-    public function __construct($subPath = null, $primaryCore = null)
-    {
-        $this->IgnoreDatabase = true;
-        parent::__construct($subPath, $primaryCore);
-    }
-
     public function ClearModels()
     {
+        $this->SetupCapabilities(array(CAPABILITIES_MODELS));
+
         echo "Clearing model cache";
 
         // Make sure the cache folder and cache folders exists
