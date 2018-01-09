@@ -9,10 +9,6 @@ RUN apt-get install -y curl git zip unzip
 
 COPY . /var/www/html
 
-RUN chmod -R -f 751 /var/www/html
-RUN chown -R -f www-data /var/www/html
-RUN chgrp -R -f www-data /var/www/html
-
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
