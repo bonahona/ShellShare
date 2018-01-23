@@ -19,10 +19,5 @@
     ]
   },
   "Caching": {
-    "FileOutputCache": {
-      "Name": "OutputCache",
-      "CacheFolder": "/Temp/Cache/Output/",
-      "StorageTime": 900
-    }
   }
 }

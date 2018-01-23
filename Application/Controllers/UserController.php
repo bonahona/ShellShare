@@ -9,22 +9,18 @@ class UserController extends BaseController
         }
     }
 
-    public function Index()
-    {
-
-    }
-
     public function Login($ref = null)
     {
         $this->Title = 'Login';
         $this->Layout = 'Login';
+
         if($this->IsPost()) {
             $user = $this->Data->RawParse('User');
 
             $response = $this->Helpers->ShellAuth->Login($user['Username'], $user['Password']);
 
-            if($response['Error'] != 0){
-                foreach($response['ErrorList'] as $error){
+            if($response['errors'] != 0){
+                foreach($response['errors'] as $error){
                     $this->ModelValidation->AddError('User', 'Password', $error);
                 }
             }

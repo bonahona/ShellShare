@@ -41,7 +41,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <?php if($this->IsLoggedIn()):?>
-                    <li><a class="light-grey" href="/User/Logout">Log out</a></li>
+                    <li><a class="light-grey" href="/User/Logout/">Log out</a></li>
                 <?php endif;?>
             </ul>
             <form method="get" action="/Home/Search" class="navbar-form navbar-right">

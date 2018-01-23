@@ -247,7 +247,6 @@ class Core
 
             if (!$this->ReadConfig()) {
                 trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
-                trigger_error("Failed to read ApplicationConfig", E_USER_ERROR);
             }
 
             $this->PluginPath = '';
@@ -325,6 +324,7 @@ class Core
             if(CheckCapabilities(array(CAPABILITIES_MODEL_CACHING, CAPABILITIES_REQUEST, CAPABILITIES_ALL), $capabilities)) {
                 $this->CacheModels();
             }
+
             $this->Database = $primaryCore->GetDatabase();
             $this->Helpers = $primaryCore->GetHelpers();
             $this->SetupHelpers();
@@ -338,7 +338,7 @@ class Core
         $this->SetupCore('', $this, $capabilities);
 
         if(CheckCapabilities(array(CAPABILITIES_PLUGINS, CAPABILITIES_REQUEST, CAPABILITIES_ALL), $capabilities)){
-            $this->SetupPlugins();
+            $this->SetupPlugins($capabilities);
         }
 
         if(CheckCapabilities(array(CAPABILITIES_MODELS, CAPABILITIES_REQUEST, CAPABILITIES_ALL), $capabilities)) {
@@ -996,10 +996,10 @@ class Core
         }
     }
 
-    public function SetupPlugins()
+    public function SetupPlugins($capabilities)
     {
         foreach($this->Plugins as $plugin){
-            $plugin->SetupCore($plugin->PluginPath, $this);
+            $plugin->SetupCore($plugin->PluginPath, $this, $capabilities);
         }
     }
 
