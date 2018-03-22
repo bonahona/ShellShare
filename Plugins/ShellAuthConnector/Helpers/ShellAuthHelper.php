@@ -7,12 +7,15 @@ class ShellAuthHelper implements  IHelper
     public $ShellAuthServer;
     public $ShellAuthPort;
     public $ShellAuthMethodPath;
+    public $LocalApplicationId;
+
     public $Controller;
 
     public function Init($config, $controller)
     {
         $this->ApplicationName = $config['ShellApplication']['Name'];
         $this->PublicKey = $config['ShellApplication']['PublicKey'];
+        $this->LocalApplicationId = $config['ShellApplication']['LocalId'];
 
         $this->ShellAuthServer = $config['ShellAuthServer']['Server'];
         $this->ShellAuthPort = $config['ShellAuthServer']['Port'];
@@ -21,25 +24,86 @@ class ShellAuthHelper implements  IHelper
         $this->Controller = $controller;
     }
 
+    public function GetApplicationLinks()
+    {
+        $payload = "query{
+    PublicApplications{
+		Id,
+		MenuName,
+		Url
+	}
+}";
+        return $this->SendToServer($payload);
+    }
+
     public function CreateApplication($application)
     {
-        $payLoad = array(
-            'ShellApplication' => $application
-        );
+        $name = $application['Name'];
+        $isActive = (int)isset($application['IsActive']);
+        $defaultUserLevel = $application['DefaultUserLevel'];
+        $rsaPublicKey = $application['RsaPublicKey'];
+        $showInMenu = (int)isset($application['ShowInMenu']);
+        $menuName = $application['MenuName'];
+        $url = $application['Url'];
 
-        $callPath = $this->GetApplicationPath();
+        $payload = "mutation{
+	ShellApplication(
+		Name: \"$name\",
+		IsActive: $isActive,
+		DefaultUserLevel: $defaultUserLevel,
+		RsaPublicKey: \"$rsaPublicKey\",
+		ShowInMenu: $showInMenu,
+		MenuName: \"$menuName\",
+		Url: \"$url\"
+	){
+		Id,
+		Name,
+		IsActive,
+		DefaultUserLevel,
+		RsaPublicKey,
+		ShowInMenu,
+		MenuName,
+		Url
+	}
+}";
 
-        return $this->SendToServer($payLoad, $callPath);
+        return $this->SendToServer($payload);
     }
 
     public function EditApplication($application)
     {
-        $payload = array(
-            'ShellApplication' => $application
-        );
+        $id = $application['Id'];
+        $name = $application['Name'];
+        $isActive = (int)isset($application['IsActive']);
+        $defaultUserLevel = $application['DefaultUserLevel'];
+        $rsaPublicKey = $application['RsaPublicKey'];
+        $showInMenu = (int)isset($application['ShowInMenu']);
+        $menuName = $application['MenuName'];
+        $url = $application['Url'];
 
-        $callPath = $this->GetApplicationPath('EditApplication');
-        return $this->SendToServer($payload, $callPath);
+        $payload = "mutation{
+	ShellApplication(
+		Id: \"$id\",
+		Name: \"$name\",
+		IsActive: $isActive,
+		DefaultUserLevel: $defaultUserLevel,
+		RsaPublicKey: \"$rsaPublicKey\",
+		ShowInMenu: $showInMenu,
+		MenuName: \"$menuName\",
+		Url: \"$url\"
+	){
+		Id,
+		Name,
+		IsActive,
+		DefaultUserLevel,
+		RsaPublicKey,
+		ShowInMenu,
+		MenuName,
+		Url
+	}
+}";
+
+        return $this->SendToServer($payload);
     }
 
     public function DeleteApplication($id)
@@ -49,51 +113,87 @@ class ShellAuthHelper implements  IHelper
         return $this->SendToServer($payLoad, $callPath);
     }
 
-    public function GetApplication($id = null)
+    public function GetApplications()
     {
-        if($id == null){
-            $payLoad = array();
-        }else{
-            $payLoad = array(
-                'Id' => $id
-            );
-        }
+        $payload = "query{
+	ShellApplications {
+		Id,
+		Name,
+		IsActive
+	}
+}";
+        return $this->SendToServer($payload);
+    }
 
-        $callPath = $this->GetApplicationPath('GetApplication');
-        return $this->SendToServer($payLoad, $callPath);
+    public function GetApplication($id)
+    {
+        $payload = "query{
+	ShellApplication(id: \"$id\") {
+		Id,
+		Name,
+		IsActive,
+		RsaPublicKey,
+		DefaultUserLevel,
+		ShowInMenu,
+		MenuName,
+		Url
+	}
+}";
+        return $this->SendToServer($payload);
     }
 
     public function CreateUser($shellUser)
     {
-        $payLoad = array(
-            'ShellUser' => $shellUser
-        );
+        $username = $shellUser['Username'];
+        $displayName = $shellUser['DisplayName'];
+        $password =$shellUser['Password'];
 
-        $callPath = $this->GetApplicationPath('CreateUser');
-        return $this->SendToServer($payLoad, $callPath);
+        $payLoad = "mutation{
+	ShellUser(
+		Username: \"$username\",
+		DisplayName: \"$displayName\",
+		Password: \"$password\"
+	){
+		Id,
+		Username,
+		DisplayName
+	}
+}";
+        return $this->SendToServer($payLoad);
     }
 
     public function EditUser($shellUser)
     {
-        $payLoad = array(
-            'ShellUser' => $shellUser
-        );
+        $id = $shellUser['Id'];
+        $username = $shellUser['Username'];
+        $displayName = $shellUser['DisplayName'];
 
-        $callPath = $this->GetApplicationPath('EditUser');
-        return $this->SendToServer($payLoad, $callPath);
+        $payLoad = "mutation{
+	ShellUser(
+		Id: \"$id\",
+		Username: \"$username\",
+		DisplayName: \"$displayName\"
+	){
+		Id,
+		Username,
+		DisplayName
+	}
+}";
+
+        return $this->SendToServer($payLoad);
     }
 
     public function ResetPassword($userId, $password)
     {
-        $payLoad = array(
-            'ShellUser' => array(
-                'Id' => $userId,
-                'Password' => $password
-            )
-        );
-
-        $callPath = $this->GetApplicationPath('ResetPassword');
-        return $this->SendToServer($payLoad, $callPath);
+        $payload = "mutation{
+	ShellUser(
+		Id: \"$userId\",
+		Password: \"$password\"
+	){
+		Id
+	}
+}";
+        return $this->SendToServer($payload);
     }
 
     public function Login($username, $password)
@@ -138,67 +238,104 @@ class ShellAuthHelper implements  IHelper
 
     public function Logout($accessToken = null)
     {
-        if($accessToken == null){
-            $accessToken = $this->Controller->Session['SessionToken'];
-        }
-        $payLoad = array(
-            'AccessToken' => $accessToken
-        );
-
-        $callPath = $this->GetApplicationPath('Logout');
         $this->Controller->Session->Destroy();
-        return $this->SendToServer($payLoad, $callPath);
     }
 
-    public function CheckAccessToken($accessToken = null)
+    public function GetUser($id)
     {
-        if($accessToken == null){
-            $accessToken = $this->Controller->Session['SessionToken'];
-        }
-        $payLoad = array(
-            'AccessToken' => $accessToken
-        );
+        $payload = "query{
+	ShellUser(id: \"$id\")
+	{
+		Id,
+		Username,
+		DisplayName,
+		IsActive,
+		Privileges{
+			ShellApplication{
+				Id,
+				Name,
+				IsActive
+			},
+			Id,
+			UserLevel
+		}
+	},
+	ShellApplications{
+		Id,
+		Name,
+		IsActive
+	}
+}";
 
-        $callPath = $this->GetApplicationPath('CheckAccessToken');
-        return $this->SendToServer($payLoad, $callPath);
+        return $this->SendToServer($payload);
     }
 
-    public function GetUser($id = null)
+    public function GetUsers()
     {
-        if($id != null){
-            $payLoad = array(
-                'Id' => $id
-            );
-        }else{
-            $payLoad = array();
-        }
-
-        $callPath = $this->GetApplicationPath('GetUser');
-
-        return $this->SendToServer($payLoad, $callPath);
+        $payload = 'query{
+	ShellUsers{
+		Id,
+		Username,
+		DisplayName,
+		IsActive
+	}
+}';
+        return $this->SendToServer($payload);
     }
 
     public function GetLocalUsers()
     {
-        $callPath = $this->GetApplicationPath('GetLocalUsers');
-        return $this->SendToServer(array(), $callPath);
+        $id = $this->LocalApplicationId;
+
+        $payload = "
+        query{
+	ShellApplication(id: \"$id\"){
+		Id,
+		Privileges{
+		    Id,
+			UserLevel
+			ShellUser{
+				Id,
+				Username,
+				DisplayName				
+			}
+		}
+	}
+}";
+
+        return $this->SendToServer($payload);
     }
 
-    public function SetPrivilegeLevel($userLevel, $userId, $applicationId = null)
+    public function SetPrivilegeLevel($privilegeId, $userLevel)
     {
-        $payLoad = array(
-            'ShellUserPrivilege' => array(
-                'ShellUserId' => $userId,
-                'UserLevel' => $userLevel
-            )
-        );
+        $payLoad = "
+        mutation{
+	ShellUserPrivilege(
+		Id: \"$privilegeId\",
+		UserLevel: $userLevel
+	){
+		ShellUserId,
+		UserLevel
+	}
+}";
 
-        if($applicationId != null){
-            $payLoad['ShellUserPrivilege']['ShellApplicationId'] = $applicationId;
-        }
+        return $this->SendToServer($payLoad);
+    }
 
-        $callPath = $this->GetApplicationPath('SetPrivilegeLevel');
-        return $this->SendToServer($payLoad, $callPath);
+    public function CreatePrivilege($applicationId, $userId, $userLevel)
+    {
+        $payload = "
+        mutation{
+	ShellUserPrivilege(
+		ShellUserId: \"$applicationId\",
+		ShellApplicationId: \"$userId\",
+		UserLevel: $userLevel
+	){
+		Id,
+		UserLevel
+	}
+}";
+        return $this->SendToServer($payload);
     }
 
     public function GetUserApplicationPrivileges($userId)
@@ -225,12 +362,17 @@ class ShellAuthHelper implements  IHelper
 
         $data = json_encode($data);
 
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: ' . $this->Controller->Session['SessionToken']
+        ];
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $callPath);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_USERAGENT, "ShellAuthConnector");
-        curl_setopt($curl, CURLOPT_HTTPHEADER,     array('Content-Type: text/plain'));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
         if(!$response = curl_exec($curl)){

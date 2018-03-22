@@ -3,7 +3,8 @@
     {
     },
     "ShellApplication": {
-        "Name": "Share",
+        "Name": "Fyrvall",
+        "LocalId": "3",
         "PublicKey": "-"
     },
     "ShellAuthServer": {
