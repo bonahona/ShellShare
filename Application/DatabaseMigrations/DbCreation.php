@@ -22,7 +22,7 @@ class DbCreation implements IDatabaseMigration
             ->AddColumn('Name', 'varchar(128)')
             ->AddColumn('AccessRightsMask', 'int')
             ->AddColumn('NavigationName', 'varchar(512)')
-            ->AddReference('vvirtualdirecotyr', 'id', array(), 'ParentDirectoryId')
+            ->AddReference('virtualdirectory', 'id', array(), 'ParentDirectoryId')
             ->AddReference('localuser', 'Id', array(), 'OwnerId');
 
         $migrator->CreateTable('document')

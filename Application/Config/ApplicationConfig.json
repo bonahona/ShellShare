@@ -2,7 +2,9 @@
   "Application": {
     "DefaultLayout": "Default",
     "NotFoundController" : "Home",
-    "NotFoundAction": "NotFound"
+    "NotFoundAction": "NotFound",
+    "CapitalizeControllerName": true,
+    "CapitalizeActionName": true
   },
   "Debug":{
     "DieOnRoutingError": true,

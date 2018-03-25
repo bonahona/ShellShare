@@ -234,7 +234,7 @@ class Routing
             }
 
             $routeDescriptionName = $routeDescription[$key]['Value'];
-            if($routeDescriptionName != $requestInfo[$key]){
+            if(strtolower($routeDescriptionName) != strtolower($requestInfo[$key])){
                 return false;
             }
 

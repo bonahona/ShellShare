@@ -27,9 +27,9 @@ class VirtualDirectoryController extends BaseController
             $currentUser = $this->GetCurrentUser();
 
             if($parentDirectory == null){
-                $virtualDirectory = $this->Models->VirtualDirectory->Create(array('DirectoryId' => null, 'OwnerId' => $currentUser['Id']));
+                $virtualDirectory = $this->Models->VirtualDirectory->Create(array('DirectoryId' => null, 'OwnerId' => $currentUser['LocalUser']));
             }else {
-                $virtualDirectory = $this->Models->VirtualDirectory->Create(array('ParentDirectoryId' => $parentDirectory->Id, 'OwnerId' => $currentUser['Id']));
+                $virtualDirectory = $this->Models->VirtualDirectory->Create(array('ParentDirectoryId' => $parentDirectory->Id, 'OwnerId' => $currentUser['LocalUser']));
             }
             $dbVirtualDirectories = $this->Models->VirtualDirectory->All();
             $virtualDirectories = array();

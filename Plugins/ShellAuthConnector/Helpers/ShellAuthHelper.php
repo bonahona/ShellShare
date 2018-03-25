@@ -223,14 +223,19 @@ class ShellAuthHelper implements  IHelper
         if(count($response['errors']) == 0){
             $this->Controller->Session['SessionToken'] = $response['data']['Login']['Guid'];
             $user = $response['data']['Login']['ShellUserPrivilege']['ShellUser'];
-            $this->Controller->SetLoggedInUser($user);
+
 
             // Check if a local user exists, and if not, create on
             $userId = $user['Id'];
-            if(!$this->Controller->Models->LocalUser->Any(array('ShellUserId' => $userId))){
+            $localUser = $this->Controller->Models->LocalUser->Where(['ShellUserId' => $userId])->First();
+
+            if($localUser == null){
                 $localUser = $this->Controller->Models->LocalUser->Create(array('ShellUserId' => $userId));
                 $localUser->Save();
             }
+
+            $user['LocalUser'] = $localUser->Id;
+            $this->Controller->SetLoggedInUser($user);
         }
 
         return $response;

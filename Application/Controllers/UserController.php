@@ -9,7 +9,7 @@ class UserController extends BaseController
         }
     }
 
-    public function Login($ref = null)
+    public function Login()
     {
         $this->Title = 'Login';
         $this->Layout = 'Login';
@@ -19,21 +19,25 @@ class UserController extends BaseController
 
             $response = $this->Helpers->ShellAuth->Login($user['Username'], $user['Password']);
 
-            if($response['errors'] != 0){
+            if(isset($response['errors'])){
                 foreach($response['errors'] as $error){
                     $this->ModelValidation->AddError('User', 'Password', $error);
                 }
             }
 
+            $ref = $this->Get['ref'];
             if($this->ModelValidation->Valid()) {
+
+                $shellUserId = $response['data']['Login']['ShellUserPrivilege']['ShellUser']['Id'];
+
                 if($ref == null || $ref == ""){
                     return $this->Redirect('/');
                 }else{
-                    $this->Redirect($ref);
+                    return $this->Redirect($ref);
                 }
             }
 
-            $this->Set('User', $user);  
+            $this->Set('User', $user);
             return $this->View();
         }else{
             return $this->View();
