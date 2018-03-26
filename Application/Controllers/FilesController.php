@@ -101,7 +101,7 @@ class FilesController extends BaseController
             $file = $this->Files['UploadedFile'];
 
             $fileName = uniqid();
-            $directory = '/Upload/Files/';
+            $directory = '/uploads/Files/';
             $fileExtension = $file->GetFileExtension();
 
             if(!is_dir($directory)){
