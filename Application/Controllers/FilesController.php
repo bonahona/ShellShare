@@ -47,7 +47,7 @@ class FilesController extends BaseController
         $uploadedFile = $document->GetCurrentFile();
         
         $response = new HttpResult();
-        $response->Content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
+        $response->Content = file_get_contents('/var/www/html/' . $uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
         $response->MimeType = $uploadedFile->MimeType;
 
         return $response;
@@ -65,7 +65,7 @@ class FilesController extends BaseController
         }
 
         $response = new HttpResult();
-        $response->Content = file_get_contents($uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
+        $response->Content = file_get_contents('/var/www/html/' . $uploadedFile->LocalFilePath, FILE_USE_INCLUDE_PATH);
         $response->MimeType = $uploadedFile->MimeType;
 
         return $response;
