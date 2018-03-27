@@ -7,12 +7,7 @@ RUN a2enmod rewrite
 RUN apt-get update
 RUN apt-get install -y curl git zip unzip dos2unix
 
-
 COPY . /var/www/html
-
-VOLUME ["/var/www/html/uploads"]
-RUN mkdir /var/www/html/uploads/Files
-RUN chmod -R 777 /var/www/html/uploads
 
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data

@@ -97,34 +97,33 @@ class FilesController extends BaseController
 
         if($this->IsPost() && !$this->Data->IsEmpty()){
             $document = $this->Data->Parse('Document', $this->Models->Document);
-            
+
             $file = $this->Files['UploadedFile'];
 
-            $fileName = uniqid();
-            $directory = '/uploads/Files/';
-            $fileExtension = $file->GetFileExtension();
+            $directory = '/uploads/files/';
 
-            if(!is_dir($directory)){
-                mkdir($directory, 0777, true);
-            }
+            if($file != null) {
+                $fileName = uniqid();
+                $fileExtension = $file->GetFileExtension();
 
-            $completePath = $directory . $fileName . '.' . $fileExtension;
-            $currentUser = $this->GetCurrentUser();
-            $now = time();
+                $completePath = $directory . $fileName . '.' . $fileExtension;
+                $currentUser = $this->GetCurrentUser();
+                $now = time();
 
-            if($file->Save($completePath)){
-                $document->Save();
-                $uploadedFile = $this->Models->UploadedFile->Create();
-                $uploadedFile->LocalFilePath = $completePath;
-                $uploadedFile->CreateDate = $now;
-                $uploadedFile->MimeType = $file->Type;
-                $uploadedFile->FileExtension = $fileExtension;
-                $uploadedFile->DocumentId = $document->Id;
-                $uploadedFile->UploadedById = $currentUser['Id'];
-                $uploadedFile->Save();
+                if ($file->Save($completePath)) {
+                    $document->Save();
+                    $uploadedFile = $this->Models->UploadedFile->Create();
+                    $uploadedFile->LocalFilePath = $completePath;
+                    $uploadedFile->CreateDate = $now;
+                    $uploadedFile->MimeType = $file->Type;
+                    $uploadedFile->FileExtension = $fileExtension;
+                    $uploadedFile->DocumentId = $document->Id;
+                    $uploadedFile->UploadedById = $currentUser['LocalUser'];
+                    $uploadedFile->Save();
 
-                $redirectPath = $document->GetHistoryPath();
-                return $this->Redirect($redirectPath);
+                    $redirectPath = $document->GetHistoryPath();
+                    return $this->Redirect($redirectPath);
+                }
             }
 
             $this->Set('Document', $document);
@@ -147,7 +146,7 @@ class FilesController extends BaseController
             $this->Set('VirtualDirectories', $virtualDirectories);
 
             $currentUser = $this->GetCurrentUser();
-            $document = $this->Models->Document->Create(array('OwnerId' => $currentUser['Id'], 'DirectoryId' => $parentDirectory->Id));
+            $document = $this->Models->Document->Create(array('OwnerId' => $currentUser['LocalUser'], 'DirectoryId' => $parentDirectory->Id));
             $this->Set('Document', $document);
 
             return $this->View();
@@ -171,7 +170,7 @@ class FilesController extends BaseController
             $file = $this->Files['UploadedFile'];
 
             $fileName = uniqid();
-            $directory = '/Upload/Files/';
+            $directory = '/uploads/files/';
             $fileExtension = $file->GetFileExtension();
 
             if(!is_dir($directory)){
