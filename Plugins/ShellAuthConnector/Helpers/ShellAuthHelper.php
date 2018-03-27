@@ -353,6 +353,19 @@ class ShellAuthHelper implements  IHelper
         return $this->SendToServer($payLoad, $callPath);
     }
 
+    public function GetUsersById(array $userIds)
+    {
+        $queries = [];
+        foreach($userIds as $id){
+            $queries = "user$id: ShellUser(id: \"$id\"){
+                Username
+            }";
+        }
+
+        $payload = "query{" . implode("\n", $queries) . "}";
+        return $this->SendToServer($payload);
+    }
+
     protected function GetApplicationPath()
     {
         $result = 'http://' . $this->ShellAuthServer . ":" . $this->ShellAuthPort . $this->ShellAuthMethodPath;
