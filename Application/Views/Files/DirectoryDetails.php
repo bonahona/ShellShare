@@ -35,7 +35,7 @@
                         </td>
                         <td><?php echo $document->GetShortDescription();?></td>
                         <td><?php echo $document->GetLastUpdated();?></td>
-                        <td><?php echo $document->GetUploadedBy();?></td>
+                        <td><?php echo $document->AuthUser['Username'];?></td>
                         <?php if($this->CanEditDirectory($VirtualDirectory->Id)):?>
                             <td class="">
                                 <a class="btn btn-medium btn-default" href="<?php echo $document->GetEditPath();?>"><span class="glyphicon glyphicon-pencil"></span></a>

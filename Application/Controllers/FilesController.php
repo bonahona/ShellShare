@@ -17,12 +17,20 @@ class FilesController extends BaseController
         }
 
         $pathResult = $this->GetNode($path, $this->GetCurrentUser());
+
         $node = $pathResult['Node'];
+
+
+
+
 
         if($node == null){
             return $this->HttpNotFound();
         } else if(is_a($node, 'VirtualDirectory')){
             $this->ToggleFolder($node->Id);
+
+            $this->MapUsersForDirectory($node);
+
             $this->Set('VirtualDirectory', $node);
             return $this->View('DirectoryDetails');
         }else if(is_a($node, 'Document')){
@@ -32,6 +40,42 @@ class FilesController extends BaseController
 
         // Fallback
         return $this->HttpNotFound();
+    }
+
+    private function MapUsersForDirectory($node)
+    {
+        $ids = [];
+        foreach($node->Documents as $document){
+            $ids[] = $document->OwnerId;
+        }
+
+        $users = $this->Helpers->ShellAuth->GetUsersById($ids);
+        $users = array_values($users['data']);
+
+        $count = 0;
+        foreach($node->Documents as $document){
+            $document->AuthUser = $users[$count];
+
+            $count ++;
+        }
+    }
+
+    private function MapUsersForDocument($node)
+    {
+        $ids = [];
+        foreach($node->UploadedFiles as $uploadedFile){
+            $ids[] = $uploadedFile->UploadedById;
+        }
+
+        $users = $this->Helpers->ShellAuth->GetUsersById($ids);
+        $users = array_values($users['data']);
+
+        $count = 0;
+        foreach($node->UploadedFiles as $uploadedFile){
+            $uploadedFile->AuthUser = $users[$count];
+
+            $count ++;
+        }
     }
 
     public function Download()
@@ -83,7 +127,9 @@ class FilesController extends BaseController
             return $this->HttpNotFound();
         }
 
+        $this->MapUsersForDocument($document);
         $this->Set('Document', $document);
+
         return $this->View();
     }
 

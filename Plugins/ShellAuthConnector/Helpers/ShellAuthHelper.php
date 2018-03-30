@@ -356,10 +356,12 @@ class ShellAuthHelper implements  IHelper
     public function GetUsersById(array $userIds)
     {
         $queries = [];
+        $count = 0;
         foreach($userIds as $id){
-            $queries = "user$id: ShellUser(id: \"$id\"){
+            $queries[] = "user" . str_pad($count, 2, "0", STR_PAD_LEFT) . ": ShellUser(id: \"$id\"){
                 Username
             }";
+            $count++;
         }
 
         $payload = "query{" . implode("\n", $queries) . "}";
@@ -382,7 +384,8 @@ class ShellAuthHelper implements  IHelper
 
         $headers = [
             'Content-Type: application/json',
-            'Authorization: ' . $this->Controller->Session['SessionToken']
+            'Authorization: ' . $this->Controller->Session['SessionToken'],
+            'Psk: ' . getenv('PRE_SHARED_KEY')
         ];
 
         $curl = curl_init();

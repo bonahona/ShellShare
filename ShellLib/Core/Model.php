@@ -195,6 +195,10 @@ class Model
             $result[$key] = 'Proxy Collection';
         }
 
+        foreach($this->CustomProperties as $key => $value){
+            $result[$key] = $value;
+        }
+
         return $result;
     }
 

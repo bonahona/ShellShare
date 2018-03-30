@@ -35,7 +35,7 @@
                     <tr>
                         <td><?php echo $uploadedFile->GetLastUpdated();?></td>
                         <td><a href="<?php echo $uploadedFile->GetDirectDownloadLink();?>" download="<?php echo $uploadedFile->GetOldName();?>"><span class="glyphicon glyphicon-download-alt"></span></a></td>
-                        <td><?php echo $uploadedFile->GetUploadedBy();?></td>
+                        <td><?php echo $uploadedFile->AuthUser['Username'];?></td>
                         <td>
                             <?php if($key == 0):?>
                                 Latest
