@@ -50,6 +50,10 @@ class FilesController extends BaseController
         }
 
         $users = $this->Helpers->ShellAuth->GetUsersById($ids);
+        if($users == null){
+            return;
+        }
+
         $users = array_values($users['data']);
 
         $count = 0;
