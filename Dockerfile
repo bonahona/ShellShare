@@ -9,6 +9,8 @@ RUN apt-get install -y curl git zip unzip dos2unix
 
 COPY . /var/www/html
 
+RUN chmod -R 751 *
+
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
 ENV APACHE_LOG_DIR /var/log/apache2
