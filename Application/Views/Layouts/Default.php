@@ -30,8 +30,13 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="navbar-brand"><a href="http://documentation.fyrvall.com">Documentation</a></li>
-                        <li class="navbar-brand"><a href="/">Share</a></li>
+                        <?php foreach($ApplicationLinks['PublicApplications'] as $applicationLink):?>
+                            <li class="navbar-brand">
+                                <a href="<?php echo "http://" . $applicationLink['Url'];?>">
+                                    <?php echo $applicationLink['MenuName'];?>
+                                </a>
+                            </li>
+                        <?php endforeach;?>
                     </ul>
                 </li>
             </ul>

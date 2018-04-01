@@ -21,6 +21,13 @@ class BaseController extends Controller
             $this->UserPrivileges = $userPrivileges['Data'];
             $this->Set('UserPrivileges', $this->UserPrivileges);
         }
+
+        $this->SetLinks();
+    }
+
+    protected function SetLinks()
+    {
+        $this->Set('ApplicationLinks', $this->Helpers->ShellAuth->GetApplicationLinks()['data']);
     }
 
     protected function SetBreadCrumbs($directoryList)
